@@ -26,13 +26,15 @@ You can also freely choose the frontend (and possibly mobile frontend) technolog
 
 ## Stuff to do
 
-Important! Implementing all of the features is not needed for a good exercise result. Instead of implementing all the features, you may concentrate on:
+**Important!** Implementing all of the proposed features is not needed for a good exercise result. You may also concentrate on:
 
 * Good documentation (readme/other docs)
 * Proper git usage (small commits, informative commit messages)
 * Tests
-* Getting features completed
+* Getting features complete
 * Writing good code
+
+Which are all highly valued in a good repository.
 
 You can read more about tips from Solita Dev Blog: [Do's and Dont's of Dev Academy Pre-assignments](https://dev.solita.fi/2021/11/04/how-to-pre-assignments.html)
 
