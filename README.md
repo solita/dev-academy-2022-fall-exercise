@@ -1,6 +1,8 @@
-# City bike data exercise
+# Helsinki city bike app (Dev Academy pre-assignment)
 
-Solita has received an interesting project offer to create a UI and a backend service for displaying data from journeys made with city bikes in the Helsinki Capital area.
+This is the pre-assignment for Solita Dev Academy Finland fall 2022. But if you’re here just purely out of curiosity, feel free to snatch the idea and make your own city bike app just for the fun of it!
+
+Let's imagine that you have received an interesting project offer to create a UI and a backend service for displaying data from journeys made with city bikes in the Helsinki Capital area.
 
 For the exercise download three datasets of journey data. The data is owned by City Bike Finland.
 
@@ -104,4 +106,4 @@ Focus on the recommended features. For extra points, you might want to also comp
 
 ## Returning the exercise
 
-Return the exercise as a link to your GitHub repository.
+If you wish to apply to Dev Academy, make sure to add the link to your GitHub repository to the application.
