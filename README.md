@@ -20,7 +20,7 @@ If you have trouble downloading the datasets, please contact pauliina.hovila@sol
 ## The exercise
 
 Create a web application that uses a backend service to fetch the data.
-Backend can be made with any technology. We at Solita use for example (not in preference order) Java/Kotlin/Clojure/C#/TypeScript/Golang but you are free to choose any other technology as well.
+Backend can be made with any technology. We at Solita use for example (not in preference order) Java/Kotlin/Clojure/C#/TypeScript/Go but you are free to choose any other technology as well.
 
 Backend can use a database, or it can be memory-based. Real database use is a preferable choice because it allows you to show broader skills. Also, the datasets are quite big so in-memory operations may be quite slow.
 
