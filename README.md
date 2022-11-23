@@ -40,7 +40,7 @@ Which are all highly valued in a good repository.
 
 You can read more about tips from Solita Dev Blog: [Do's and Dont's of Dev Academy Pre-assignments](https://dev.solita.fi/2021/11/04/how-to-pre-assignments.html)
 
-Also you can read Solita Dev Blog: [Testing Primer][https://dev.solita.fi/2022/11/01/testing-primer-dev-academy.html)
+Also you can read Solita Dev Blog: [Testing Primer](https://dev.solita.fi/2022/11/01/testing-primer-dev-academy.html)
 
 ## Functional requirements
 
