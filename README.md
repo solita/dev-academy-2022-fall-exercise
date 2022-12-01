@@ -1,6 +1,6 @@
 # Helsinki city bike app (Dev Academy pre-assignment)
 
-This is the pre-assignment for Solita Dev Academy Finland fall 2022. But if you’re here just purely out of curiosity, feel free to snatch the idea and make your own city bike app just for the fun of it!
+This is the pre-assignment for Solita Dev Academy Finland 2023. But if you’re here just purely out of curiosity, feel free to snatch the idea and make your own city bike app just for the fun of it!
 
 Let's imagine that you have received an interesting project offer to create a UI and a backend service for displaying data from journeys made with city bikes in the Helsinki Capital area.
 
