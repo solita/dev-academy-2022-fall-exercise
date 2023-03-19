@@ -1,5 +1,5 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require("path")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
   entry: "./client/index.tsx",
@@ -24,6 +24,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: "Helsinki City Bike",
       filename: "../index.html",
+      template: "client/index.html",
     }),
   ],
-};
+}

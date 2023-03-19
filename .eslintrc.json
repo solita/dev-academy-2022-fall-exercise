@@ -5,6 +5,7 @@
         "node": true
     },
     "extends": [
+        "plugin:prettier/recommended",
         "plugin:react/recommended",
         "standard-with-typescript"
     ],
