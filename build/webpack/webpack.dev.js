@@ -1,5 +1,6 @@
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 module.exports = {
   entry: "./src/client/index.tsx",
@@ -10,6 +11,15 @@ module.exports = {
         test: /\.tsx?$/,
         use: "ts-loader",
         exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/,
+        use: [
+          // The order of these loaders is important!
+          // They will be applied in reverse order (i.e. from right to left)
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+        ],
       },
     ],
   },
@@ -26,6 +36,10 @@ module.exports = {
       title: "Helsinki City Bike",
       filename: "../index.html",
       template: "./src/client/assets/index.html",
+    }),
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+      chunkFilename: "[id].css",
     }),
   ],
 }

@@ -1,22 +1,17 @@
 import axios from "axios"
 import React, { useEffect } from "react"
 import { FC } from "react"
+import "@elastic/eui/dist/eui_theme_dark.css"
+
+import { EuiProvider } from "@elastic/eui"
+import { Journey_view } from "./Journey_view"
 
 const App: FC = () => {
-  const get_data = async () => {
-    try {
-      const response = await axios.get("/database")
-      console.log(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    get_data()
-  }, [])
-
-  return <h1>Hello, world</h1>
+  return (
+    <EuiProvider colorMode="dark">
+      <Journey_view />
+    </EuiProvider>
+  )
 }
 
 export default App
