@@ -21,10 +21,11 @@ module.exports = {
     path: path.resolve(__dirname, "../../public", "dist"),
   },
   plugins: [
+    //Will automatically attach the bundle to the index.html
     new HtmlWebpackPlugin({
       title: "Helsinki City Bike",
       filename: "../index.html",
-      template: "client/index.html",
+      template: "client/assets/index.html",
     }),
   ],
 }
