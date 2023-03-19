@@ -2,7 +2,7 @@ const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
-  entry: "./client/index.tsx",
+  entry: "./src/client/index.tsx",
   mode: "development",
   module: {
     rules: [
@@ -25,7 +25,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: "Helsinki City Bike",
       filename: "../index.html",
-      template: "client/assets/index.html",
+      template: "./src/client/assets/index.html",
     }),
   ],
 }
