@@ -5,7 +5,8 @@
   "scripts": {
     "dev_build": "yarn webpack --config ./build/webpack/webpack.dev.js",
     "start": "ts-node ./bin/www",
-    "dev": "yarn dev_build && yarn start"
+    "dev": "yarn dev_build && yarn start",
+    "docker": "docker-compose stop && docker-compose build && docker-compose up -d"
   },
   "dependencies": {
     "@elastic/datemath": "^5.0.3",

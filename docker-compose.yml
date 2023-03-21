@@ -1,0 +1,31 @@
+version: "3"
+services:
+  app:
+    image: "node:18"
+    build: 
+      context: .
+      dockerfile: dockerfile.yml
+    working_dir: /home/node/app
+    volumes:
+      - ./:/home/node/app
+    ports:
+      - "8080:8080"
+    expose:
+      - "8081"
+    environment:
+      - PORT=8080
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/mydatabase
+    command: yarn dev
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+volumes:
+  mongo-data:

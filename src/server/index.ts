@@ -3,8 +3,8 @@ import path from "path"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
 
-import app_router from "./src/server/routes/app"
-import journey_router from "./src/server/routes/journey"
+import app_router from "./routes/app"
+import journey_router from "./routes/journey"
 
 const app = express()
 

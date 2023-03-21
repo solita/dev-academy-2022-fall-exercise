@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var app = require('../src/server/index');
 var debug = require('debug')('dev-academy-2023-exercise:server');
 var http = require('http');
 
