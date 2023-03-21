@@ -1,4 +1,18 @@
 import Joi from "joi"
+import mongoose from "mongoose"
+
+const journey_schema = new mongoose.Schema({
+  departure_date: Date,
+  return_date: String,
+  departure_station_id: String,
+  departure_station_name: String,
+  return_station_id: String,
+  return_station_name: String,
+  covered_distance: Number,
+  duration: Number,
+})
+
+export default mongoose.model("Journey", journey_schema)
 
 export const csv_database_schema = Joi.object({
   Departure: Joi.string().required(),
