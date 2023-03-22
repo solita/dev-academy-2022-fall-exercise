@@ -7,7 +7,7 @@ services:
       dockerfile: dockerfile.yml
     working_dir: /home/node/app
     volumes:
-      - ./:/home/node/app
+      - ../:/home/node/app
     ports:
       - "8080:8080"
     expose:
