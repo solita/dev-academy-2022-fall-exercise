@@ -14,7 +14,7 @@ const datasets_path = path.join(__dirname, "../../../", "test_datasets", "statio
 const csv_files = fs.readdirSync(datasets_path)
 
 //Clear all Stations from the database
-export async function clear_Stations() {
+export async function clear_stations() {
   try {
     await Station.deleteMany({})
   } catch (error) {
@@ -24,7 +24,7 @@ export async function clear_Stations() {
 }
 
 //import all the csv files in the datasets folder to the database
-export async function import_datasets_to_database() {
+export async function import_stations_csv_to_database() {
   try {
     //loop through all the csv files in the datasets folder
     for (const file of csv_files) {
@@ -32,7 +32,7 @@ export async function import_datasets_to_database() {
       const csv_file_path = path.join(datasets_path, file)
       await read_csv_Station_data(csv_file_path)
     }
-    debugLog("All csv files imported to the database")
+    debugLog("All station csv files imported to the database")
     return csv_data_is_loaded()
   } catch (error) {
     errorLog("Failed to import csv datasets to database :", error)
@@ -89,7 +89,7 @@ function read_csv_Station_data(filePath: string): Promise<void> {
     })
 
     parser.on("error", (error: any) => {
-      reject(error)
+      errorLog("Parsing error :", error)
     })
 
     //Read the csv file and pipe it to the parser.

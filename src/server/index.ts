@@ -7,9 +7,17 @@ import mongoose from "mongoose"
 import app_router from "./routes/app"
 import journey_router from "./routes/journey"
 import { initialize_config_collection } from "./models/config"
-import { clear_journeys, import_datasets_to_database } from "./controllers/journey"
+import {
+  clear_journeys,
+  import_journey_csv_to_database,
+} from "./controllers/journey"
 
 import debug from "debug"
+import { csv_data_is_loaded } from "./controllers/config"
+import {
+  clear_stations,
+  import_stations_csv_to_database,
+} from "./controllers/stations"
 const debugLog = debug("app:server:log")
 const errorLog = debug("app:server:error")
 
@@ -35,7 +43,12 @@ async function start_database() {
     const config = await initialize_config_collection()
     if (!config.csv_data_is_loaded) {
       await clear_journeys()
-      await import_datasets_to_database()
+      await import_journey_csv_to_database()
+
+      await clear_stations()
+      await import_stations_csv_to_database()
+
+      await csv_data_is_loaded()
     }
     debugLog("Database initialized")
   } catch (error) {

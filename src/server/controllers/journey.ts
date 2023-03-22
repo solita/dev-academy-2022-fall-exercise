@@ -24,7 +24,7 @@ export async function clear_journeys() {
 }
 
 //import all the csv files in the datasets folder to the database
-export async function import_datasets_to_database() {
+export async function import_journey_csv_to_database() {
   try {
     //loop through all the csv files in the datasets folder
     for (const file of csv_files) {
@@ -32,8 +32,7 @@ export async function import_datasets_to_database() {
       const csv_file_path = path.join(datasets_path, file)
       await read_csv_journey_data(csv_file_path)
     }
-    debugLog("All csv files imported to the database")
-    return csv_data_is_loaded()
+    debugLog("All journey csv files imported to the database")
   } catch (error) {
     errorLog("Failed to import csv datasets to database :", error)
     throw error
@@ -58,8 +57,9 @@ function read_csv_journey_data(filePath: string): Promise<void> {
         //Validating the data from the csv file.
         const journey_csv_data_validation = csv_journey_schema.validate(record)
         if (journey_csv_data_validation.error) {
-          //If the data is not valid, then the error is returned.
-          reject(journey_csv_data_validation.error)
+          //If the data is not valid, skip this record
+          errorLog("Invalid journey data found, skipping it:", journey_csv_data_validation.error)
+          continue
         }
         //Check that journey is longer than 10 seconds
         if (parseInt(record["Duration (sec.)"]) < 10) {
@@ -93,7 +93,7 @@ function read_csv_journey_data(filePath: string): Promise<void> {
     })
 
     parser.on("error", (error: any) => {
-      reject(error)
+      errorLog("Parsing error :", error)
     })
 
     //Read the csv file and pipe it to the parser.
