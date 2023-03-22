@@ -5,20 +5,39 @@ import { parse } from "csv-parse"
 import fs from "fs"
 import { csv_database_schema } from "../models/journey"
 import Journey from "../models/journey"
+import { csv_data_is_loaded } from "./config"
+
+import debug from "debug"
+const debugLog = debug("app:journey_controller:log")
+const errorLog = debug("app:journey_controller:error")
 
 const datasets_path = path.join(__dirname, "../../../", "datasets")
 const csv_files = fs.readdirSync(datasets_path)
 
+//Clear all journeys from the database
+export async function clear_journeys() {
+  try {
+    await Journey.deleteMany({})
+  } catch (error) {
+    errorLog("Failed to clear journeys :", error)
+    throw error
+  }
+}
+
 //import all the csv files in the datasets folder to the database
-async function import_datasets_to_database() {
+export async function import_datasets_to_database() {
   try {
     //loop through all the csv files in the datasets folder
     for (const file of csv_files) {
+      debugLog(`Importing ${file} to the database`)
       const csv_file_path = path.join(datasets_path, file)
       await read_csv_journey_data(csv_file_path)
     }
+    debugLog("All csv files imported to the database")
+    return csv_data_is_loaded()
   } catch (error) {
-    console.log(error)
+    errorLog("Failed to import csv datasets to database :", error)
+    throw error
   }
 }
 
@@ -86,8 +105,4 @@ function read_csv_journey_data(filePath: string): Promise<void> {
 async function save_journey_data(data: Journey_data) {
   const journey = new Journey(data)
   await journey.save()
-}
-
-export default {
-  import_datasets_to_database
 }

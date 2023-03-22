@@ -7,8 +7,8 @@ export const Journey_view = () => {
 
   const get_journey_data = async () => {
     try {
-      const response = await axios.get("/database")
-      set_journey_data(response.data)
+      // const response = await axios.get("/database")
+      // set_journey_data(response.data)
     } catch (error) {
       console.log(error)
     }

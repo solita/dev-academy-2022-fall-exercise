@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev_build": "yarn webpack --config ./build/webpack/webpack.dev.js",
-    "start": "ts-node ./bin/www",
+    "start": "DEBUG=app* ts-node ./bin/www",
     "dev": "yarn dev_build && yarn start",
     "docker_stop": "docker-compose -f ./docker/docker-compose.yml stop",
     "docker_build": "docker-compose -f ./docker/docker-compose.yml build",
@@ -27,7 +27,7 @@
     "cookie-parser": "~1.4.4",
     "css-loader": "^6.7.3",
     "csv-parse": "^5.3.6",
-    "debug": "~2.6.9",
+    "debug": "^4.3.4",
     "eslint": "^8.0.1",
     "eslint-plugin-prettier": "^4.2.1",
     "express": "~4.16.1",
@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
+    "@types/debug": "^4.1.7",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "eslint-config-standard-with-typescript": "^34.0.1",
     "eslint-plugin-import": "^2.25.2",
