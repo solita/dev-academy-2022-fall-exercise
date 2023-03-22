@@ -19,3 +19,35 @@ export interface Journey_data {
   covered_distance: number
   duration: number
 }
+
+export interface Station_csv_data {
+  FID: string
+  ID: string
+  Nimi: string
+  Namn: string
+  Name: string
+  Osoite: string
+  Adress: string
+  Kaupunki: string
+  Stad: string
+  Operaattor: string
+  Kapasiteet: string
+  x: string
+  y: string
+}
+
+export interface Station_data {
+  fid: string
+  station_id: string
+  nimi: string
+  namn: string
+  name: string
+  osoite: string
+  adress: string
+  kaupunki: string
+  stad: string
+  operaattor: string
+  kapasiteet: string
+  x: number
+  y: number
+}

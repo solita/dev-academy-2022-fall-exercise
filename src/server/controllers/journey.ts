@@ -1,9 +1,8 @@
-import { Request, Response } from "express"
 import path from "path"
 import { Journey_csv_data, Journey_data } from "../../common"
 import { parse } from "csv-parse"
 import fs from "fs"
-import { csv_database_schema } from "../models/journey"
+import { csv_journey_schema } from "../models/journey"
 import Journey from "../models/journey"
 import { csv_data_is_loaded } from "./config"
 
@@ -11,7 +10,7 @@ import debug from "debug"
 const debugLog = debug("app:journey_controller:log")
 const errorLog = debug("app:journey_controller:error")
 
-const datasets_path = path.join(__dirname, "../../../", "datasets")
+const datasets_path = path.join(__dirname, "../../../", "test_datasets", "journeys")
 const csv_files = fs.readdirSync(datasets_path)
 
 //Clear all journeys from the database
@@ -57,7 +56,7 @@ function read_csv_journey_data(filePath: string): Promise<void> {
       let record: Journey_csv_data
       while ((record = parser.read()) !== null) {
         //Validating the data from the csv file.
-        const journey_csv_data_validation = csv_database_schema.validate(record)
+        const journey_csv_data_validation = csv_journey_schema.validate(record)
         if (journey_csv_data_validation.error) {
           //If the data is not valid, then the error is returned.
           reject(journey_csv_data_validation.error)
@@ -103,6 +102,6 @@ function read_csv_journey_data(filePath: string): Promise<void> {
 }
 
 async function save_journey_data(data: Journey_data) {
-  const journey = new Journey(data)
-  await journey.save()
+  const new_journey = new Journey(data)
+  await new_journey.save()
 }

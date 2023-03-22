@@ -14,7 +14,7 @@ const journey_schema = new mongoose.Schema({
 
 export default mongoose.model("Journey", journey_schema)
 
-export const csv_database_schema = Joi.object({
+export const csv_journey_schema = Joi.object({
   Departure: Joi.string().required(),
   Return: Joi.string().required(),
   "Departure station id": Joi.string().required(),
