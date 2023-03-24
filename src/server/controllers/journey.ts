@@ -1,5 +1,5 @@
 import path, { resolve } from "path"
-import { Journey_csv_data, Journey_data } from "../../common"
+import { Journey_csv_data, Journey_data, Stored_journey_data } from "../../common"
 import { parse } from "csv-parse"
 import fs from "fs"
 import { csv_journey_schema } from "../models/journey"
@@ -117,27 +117,33 @@ async function save_journey_data(data: Journey_data) {
 }
 
 export interface Journey_query_result {
-  journeys: Journey_data[]
+  journeys: Stored_journey_data[]
   total_journeys: number
   total_pages: number
 }
 
 const get_journeys_params_schema = Joi.object({
-  page: Joi.number().min(1).required(),
+  page: Joi.number().min(0).required(),
   limit: Joi.number().min(1).required(),
 })
 
+interface Get_journeys_query_params {
+  page: number
+  limit: number
+}
 //Get all journeys with pagination
-export async function get_journeys(req: Request, res: Response) {
+export async function get_journeys(
+  req: Request<{}, {}, {}, Get_journeys_query_params>,
+  res: Response
+) {
   try {
-    if (!req.params.page || !req.params.limit) {
+    const { page, limit } = req.query
+    if (!page || !limit) {
       return res.status(400).json({
         message: "Page or limit not provided",
       })
     }
 
-    const page = parseInt(req.params.page)
-    const limit = parseInt(req.params.limit)
     const params_validation = get_journeys_params_schema.validate({ page, limit })
 
     if (params_validation.error) {
@@ -147,7 +153,7 @@ export async function get_journeys(req: Request, res: Response) {
       })
     }
 
-    const skip = (page - 1) * limit
+    const skip = page * limit
     const journeys = await Journey.find().skip(skip).limit(limit)
     const total_journeys = await Journey.countDocuments()
     const total_pages = Math.ceil(total_journeys / limit)

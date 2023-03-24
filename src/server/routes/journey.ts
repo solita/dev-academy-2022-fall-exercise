@@ -5,6 +5,6 @@ import { get_journeys } from "../controllers/journey";
 const router = express.Router()
 
 //Get all journeys
-router.get("/:page/:limit", get_journeys)
+router.get("/", get_journeys)
 
 export default router

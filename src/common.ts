@@ -20,6 +20,10 @@ export interface Journey_data {
   duration: number
 }
 
+export interface Stored_journey_data extends Journey_data {
+  id: string;
+}
+
 export interface Station_csv_data {
   FID: string
   ID: string

@@ -1,18 +1,31 @@
 import React, { useEffect, useState } from "react"
-import { EuiBasicTableColumn, EuiInMemoryTable, Pagination } from "@elastic/eui"
+import {
+  EuiBasicTable,
+  EuiBasicTableColumn,
+  EuiFieldSearch,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiSearchBar,
+  EuiSearchBarProps,
+  Pagination,
+  Query,
+  SearchFilterConfig,
+} from "@elastic/eui"
 import axios from "axios"
 import moment from "moment"
 import { uniqBy } from "lodash"
-import { Journey_data } from "../../common"
+import { Journey_data, Stored_journey_data } from "../../common"
 import { Journey_query_result } from "../../server/controllers/journey"
 
 export const Journey_view = () => {
-  const [journey_data, set_journey_data] = useState<Journey_data[]>([])
+  const [journey_data, set_journey_data] = useState<Stored_journey_data[]>([])
+  const [search_query, set_search_query] = useState<Query | string>("")
   const [pagination, set_pagination] = useState<Pagination>({
-    pageIndex: 1,
+    pageIndex: 0,
     pageSize: 10,
-    totalItemCount: 0,
+    totalItemCount: 3000,
     pageSizeOptions: [10, 25, 50],
+    showPerPageOptions: true,
   })
 
   const get_journey_data = async () => {
@@ -21,6 +34,8 @@ export const Journey_view = () => {
         params: { page: pagination.pageIndex, limit: pagination.pageSize },
       })
       console.log("journey data length", response.data.journeys.length)
+      console.log("total_journeys", response.data.total_journeys)
+      console.log("total_pages", response.data.total_journeys)
       set_journey_data(response.data.journeys)
       set_pagination({
         ...pagination,
@@ -33,7 +48,7 @@ export const Journey_view = () => {
 
   useEffect(() => {
     get_journey_data()
-  }, [])
+  }, [pagination.pageIndex, pagination.pageSize])
 
   const columns: EuiBasicTableColumn<Journey_data>[] = [
     {
@@ -67,53 +82,74 @@ export const Journey_view = () => {
     },
   ]
 
+  const filters: SearchFilterConfig[] = [
+    {
+      type: "field_value_selection",
+      field: "departure_station_name",
+      name: "Departure station",
+      multiSelect: false,
+      options: uniqBy(journey_data, "departure_station_name").map(
+        (journey_data) => ({
+          value: journey_data.departure_station_name,
+          view: journey_data.departure_station_name,
+        })
+      ),
+    },
+    {
+      type: "field_value_selection",
+      field: "return_station_name",
+      name: "Return station",
+      multiSelect: false,
+      options: uniqBy(journey_data, "return_station_name").map((journey_data) => ({
+        value: journey_data.return_station_name,
+        view: journey_data.return_station_name,
+      })),
+    },
+  ]
+
+  const queried_items = EuiSearchBar.Query.execute(search_query, journey_data, {
+    defaultFields: ["departure_station_name", "return_station_name", "t"],
+  })
+
+  const onChange: EuiSearchBarProps["onChange"] = ({ query, error }) => {
+    if (error) {
+      console.log(error)
+      // setError(error);
+    } else {
+      // setError(null);
+      set_search_query(query)
+    }
+  }
+
   return (
-    <EuiInMemoryTable
-      items={journey_data}
-      columns={columns}
-      pagination={pagination}
-      onTableChange={({ page: { index } }) =>
-        set_pagination({ ...pagination, pageIndex: index })
-      }
-      //Declaring these props in the component, as EUI does not exports types for them.
-      //Making it hard to define them outside the component
-      search={{
-        box: {
-          incremental: true,
-        },
-        filters: [
-          {
-            type: "field_value_selection",
-            field: "departure_station_name",
-            name: "Departure station",
-            multiSelect: false,
-            options: uniqBy(journey_data, "departure_station_name").map(
-              (journey_data) => ({
-                value: journey_data.departure_station_name,
-                view: journey_data.departure_station_name,
-              })
-            ),
-          },
-          {
-            type: "field_value_selection",
-            field: "return_station_name",
-            name: "Return station",
-            multiSelect: false,
-            options: uniqBy(journey_data, "return_station_name").map(
-              (journey_data) => ({
-                value: journey_data.return_station_name,
-                view: journey_data.return_station_name,
-              })
-            ),
-          },
-        ],
-      }}
-      sorting={{
-        sort: {
-          field: "id",
-          direction: "desc",
-        },
-      }}
-    />
+    <EuiFlexGroup gutterSize="m" direction="column">
+      <EuiFlexItem grow={false}>
+        <EuiSearchBar
+          box={{
+            incremental: true,
+            // schema,
+          }}
+          filters={filters}
+          onChange={onChange}
+        />
+      </EuiFlexItem>
+
+      <EuiFlexItem>
+        <EuiBasicTable
+          items={queried_items}
+          columns={columns}
+          pagination={pagination}
+          onChange={({ page: { index, size } }) =>
+            set_pagination({ ...pagination, pageIndex: index, pageSize: size })
+          }
+          sorting={{
+            sort: {
+              field: "id",
+              direction: "desc",
+            },
+          }}
+        />
+      </EuiFlexItem>
+    </EuiFlexGroup>
   )
 }
