@@ -31,7 +31,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, "../../", "public")))
 
 app.use("/", app_router)
-app.use("/journey", journey_router)
+app.use("/journeys", journey_router)
 
 //Initialize the database and import csv data if it has not been imported yet.
 async function start_database() {
@@ -49,8 +49,10 @@ async function start_database() {
       await import_stations_csv_to_database()
 
       await csv_data_is_loaded()
+      debugLog("Database initialized")
+    } else {
+      debugLog("Database has already been initialized, continuing")
     }
-    debugLog("Database initialized")
   } catch (error) {
     errorLog(error)
   }

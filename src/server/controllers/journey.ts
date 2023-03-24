@@ -4,7 +4,7 @@ import { parse } from "csv-parse"
 import fs from "fs"
 import { csv_journey_schema } from "../models/journey"
 import Journey from "../models/journey"
-import { csv_data_is_loaded } from "./config"
+import { Request, Response } from "express"
 
 import debug from "debug"
 const debugLog = debug("app:journey_controller:log")
@@ -112,4 +112,18 @@ function read_csv_journey_data(filePath: string): Promise<void> {
 async function save_journey_data(data: Journey_data) {
   const new_journey = new Journey(data)
   await new_journey.save()
+}
+
+//Get all journeys
+export async function get_journeys(req: Request, res: Response) {
+  try {
+    //Get all journeys from the database
+    const journeys = await Journey.find({})
+    res.status(200).json(journeys)
+  } catch (error) {
+    errorLog("Failed to get journeys :", error)
+    res.status(500).json({
+      message: "Failed to get journeys",
+    })
+  }
 }
