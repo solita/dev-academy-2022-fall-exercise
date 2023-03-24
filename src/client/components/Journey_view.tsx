@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from "react"
-import { EuiBasicTableColumn, EuiInMemoryTable } from "@elastic/eui"
+import { EuiBasicTableColumn, EuiInMemoryTable, Pagination } from "@elastic/eui"
 import axios from "axios"
 import moment from "moment"
 import { uniqBy } from "lodash"
 import { Journey_data } from "../../common"
+import { Journey_query_result } from "../../server/controllers/journey"
 
 export const Journey_view = () => {
   const [journey_data, set_journey_data] = useState<Journey_data[]>([])
+  const [pagination, set_pagination] = useState<Pagination>({
+    pageIndex: 1,
+    pageSize: 10,
+    totalItemCount: 0,
+    pageSizeOptions: [10, 25, 50],
+  })
 
   const get_journey_data = async () => {
     try {
-      const response = await axios.get("/journeys")
-      set_journey_data(response.data)
+      const response = await axios.get<Journey_query_result>("/journeys", {
+        params: { page: pagination.pageIndex, limit: pagination.pageSize },
+      })
+      console.log("journey data length", response.data.journeys.length)
+      set_journey_data(response.data.journeys)
+      set_pagination({
+        ...pagination,
+        totalItemCount: response.data.total_journeys,
+      })
     } catch (error) {
       console.log(error)
     }
@@ -57,9 +71,12 @@ export const Journey_view = () => {
     <EuiInMemoryTable
       items={journey_data}
       columns={columns}
-      pagination={true}
-      //declaring these props in the component as EUI does not provide types for them.
-      //making it hard to define them outside the component
+      pagination={pagination}
+      onTableChange={({ page: { index } }) =>
+        set_pagination({ ...pagination, pageIndex: index })
+      }
+      //Declaring these props in the component, as EUI does not exports types for them.
+      //Making it hard to define them outside the component
       search={{
         box: {
           incremental: true,

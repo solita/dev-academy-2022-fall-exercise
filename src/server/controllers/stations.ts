@@ -4,9 +4,9 @@ import fs from "fs"
 import { csv_station_schema } from "../models/station"
 import Station from "../models/station"
 import { csv_data_is_loaded } from "./config"
+import { Station_csv_data, Station_data } from "../../common"
 
 import debug from "debug"
-import { Station_csv_data, Station_data } from "../../common"
 const debugLog = debug("app:Station_controller:log")
 const errorLog = debug("app:Station_controller:error")
 
@@ -16,7 +16,8 @@ const csv_files = fs.readdirSync(datasets_path)
 //Clear all Stations from the database
 export async function clear_stations() {
   try {
-    await Station.deleteMany({})
+    debugLog("Clearing Stations from the database")
+    return Station.deleteMany({})
   } catch (error) {
     errorLog("Failed to clear Stations :", error)
     throw error

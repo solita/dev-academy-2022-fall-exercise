@@ -43,10 +43,10 @@ async function start_database() {
     const config = await initialize_config_collection()
     if (!config.csv_data_is_loaded) {
       await clear_journeys()
-      await import_journey_csv_to_database()
+      import_journey_csv_to_database()
 
       await clear_stations()
-      await import_stations_csv_to_database()
+      import_stations_csv_to_database()
 
       await csv_data_is_loaded()
       debugLog("Database initialized")

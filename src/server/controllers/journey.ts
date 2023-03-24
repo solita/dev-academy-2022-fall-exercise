@@ -7,6 +7,7 @@ import Journey from "../models/journey"
 import { Request, Response } from "express"
 
 import debug from "debug"
+import Joi from "joi"
 const debugLog = debug("app:journey_controller:log")
 const errorLog = debug("app:journey_controller:error")
 
@@ -16,7 +17,8 @@ const csv_files = fs.readdirSync(datasets_path)
 //Clear all journeys from the database
 export async function clear_journeys() {
   try {
-    await Journey.deleteMany({})
+    debugLog("Clearing journeys from the database")
+    return Journey.deleteMany({})
   } catch (error) {
     errorLog("Failed to clear journeys :", error)
     throw error
@@ -96,9 +98,9 @@ function read_csv_journey_data(filePath: string): Promise<void> {
       resolve()
     })
 
-    parser.on('skip', (error) => {
+    parser.on("skip", (error) => {
       errorLog("Skipping line in csv file due to error :", error.message)
-    });
+    })
 
     parser.on("error", (error: any) => {
       reject(error)
@@ -114,12 +116,43 @@ async function save_journey_data(data: Journey_data) {
   await new_journey.save()
 }
 
-//Get all journeys
+export interface Journey_query_result {
+  journeys: Journey_data[]
+  total_journeys: number
+  total_pages: number
+}
+
+const get_journeys_params_schema = Joi.object({
+  page: Joi.number().min(1).required(),
+  limit: Joi.number().min(1).required(),
+})
+
+//Get all journeys with pagination
 export async function get_journeys(req: Request, res: Response) {
   try {
-    //Get all journeys from the database
-    const journeys = await Journey.find({})
-    res.status(200).json(journeys)
+    if (!req.params.page || !req.params.limit) {
+      return res.status(400).json({
+        message: "Page or limit not provided",
+      })
+    }
+
+    const page = parseInt(req.params.page)
+    const limit = parseInt(req.params.limit)
+    const params_validation = get_journeys_params_schema.validate({ page, limit })
+
+    if (params_validation.error) {
+      errorLog("Invalid params :", params_validation.error)
+      return res.status(400).json({
+        message: "Invalid page or limit",
+      })
+    }
+
+    const skip = (page - 1) * limit
+    const journeys = await Journey.find().skip(skip).limit(limit)
+    const total_journeys = await Journey.countDocuments()
+    const total_pages = Math.ceil(total_journeys / limit)
+
+    res.status(200).json({ journeys, total_journeys, total_pages })
   } catch (error) {
     errorLog("Failed to get journeys :", error)
     res.status(500).json({
