@@ -32,6 +32,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "express": "~4.16.1",
     "joi": "^17.8.4",
+    "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.7.5",
     "moment": "^2.29.4",
     "mongoose": "^7.0.2",
