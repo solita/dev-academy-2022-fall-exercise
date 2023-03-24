@@ -1,4 +1,4 @@
-import path from "path"
+import path, { resolve } from "path"
 import { Journey_csv_data, Journey_data } from "../../common"
 import { parse } from "csv-parse"
 import fs from "fs"
@@ -10,7 +10,7 @@ import debug from "debug"
 const debugLog = debug("app:journey_controller:log")
 const errorLog = debug("app:journey_controller:error")
 
-const datasets_path = path.join(__dirname, "../../../", "test_datasets", "journeys")
+const datasets_path = path.join(__dirname, "../../../", "datasets", "journeys")
 const csv_files = fs.readdirSync(datasets_path)
 
 //Clear all journeys from the database
