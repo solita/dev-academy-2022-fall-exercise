@@ -48,6 +48,7 @@ function read_csv_journey_data(filePath: string): Promise<void> {
       delimiter: ",",
       columns: true,
       skip_empty_lines: true,
+      skip_records_with_error: true,
     })
 
     //Feature: Validate data before importing
@@ -58,7 +59,10 @@ function read_csv_journey_data(filePath: string): Promise<void> {
         const journey_csv_data_validation = csv_journey_schema.validate(record)
         if (journey_csv_data_validation.error) {
           //If the data is not valid, skip this record
-          errorLog("Invalid journey data found, skipping it:", journey_csv_data_validation.error)
+          errorLog(
+            "Invalid journey data found, skipping it:",
+            journey_csv_data_validation.error
+          )
           continue
         }
         //Check that journey is longer than 10 seconds
@@ -92,8 +96,12 @@ function read_csv_journey_data(filePath: string): Promise<void> {
       resolve()
     })
 
+    parser.on('skip', (error) => {
+      errorLog("Skipping line in csv file due to error :", error.message)
+    });
+
     parser.on("error", (error: any) => {
-      errorLog("Parsing error :", error)
+      reject(error)
     })
 
     //Read the csv file and pipe it to the parser.

@@ -49,6 +49,7 @@ function read_csv_Station_data(filePath: string): Promise<void> {
       delimiter: ",",
       columns: true,
       skip_empty_lines: true,
+      skip_records_with_error: true,
     })
 
     //Feature: Validate data before importing
@@ -58,8 +59,9 @@ function read_csv_Station_data(filePath: string): Promise<void> {
         //Validating the data from the csv file.
         const Station_csv_data_validation = csv_station_schema.validate(record)
         if (Station_csv_data_validation.error) {
-          //If the data is not valid, then the error is returned.
-          reject(Station_csv_data_validation.error)
+          //If the data is not valid, then log the error and continue.
+          errorLog("Invalid journey data found, skipping it:", Station_csv_data_validation.error)
+          continue
         }
 
         //Translating the data from the csv file to the data format that is easier to use and store in the application.
@@ -87,6 +89,10 @@ function read_csv_Station_data(filePath: string): Promise<void> {
     parser.on("end", () => {
       resolve()
     })
+
+    parser.on('skip', (error) => {
+      errorLog("Skipping line in csv file due to error :", error.message)
+    });  
 
     parser.on("error", (error: any) => {
       errorLog("Parsing error :", error)
