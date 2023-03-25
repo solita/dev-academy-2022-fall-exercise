@@ -133,32 +133,28 @@ export const Journey_view = () => {
   ]
 
   return (
-    <EuiForm fullWidth>
-      <EuiFormRow isInvalid={!!error} error={error?.message} fullWidth>
-        <EuiSearchBar
-          box={{
-            incremental: true,
-          }}
-          filters={filters}
-          onChange={on_search_change}
-        />
-      </EuiFormRow>
+    <>
+      <EuiSearchBar
+        box={{
+          incremental: true,
+        }}
+        filters={filters}
+        onChange={on_search_change}
+      />
 
-      <EuiFormRow fullWidth>
-        <EuiBasicTable
-          loading={is_loading}
-          items={queried_items}
-          columns={columns}
-          pagination={pagination}
-          onChange={({ page: { index, size }, sort }) => {
-            set_pagination({ ...pagination, pageIndex: index, pageSize: size })
-            if (sort) {
-              set_sorting({ sort: { field: sort.field, direction: sort.direction } })
-            }
-          }}
-          sorting={sorting}
-        />
-      </EuiFormRow>
-    </EuiForm>
+      <EuiBasicTable
+        loading={is_loading}
+        items={queried_items}
+        columns={columns}
+        pagination={pagination}
+        onChange={({ page: { index, size }, sort }) => {
+          set_pagination({ ...pagination, pageIndex: index, pageSize: size })
+          if (sort) {
+            set_sorting({ sort: { field: sort.field, direction: sort.direction } })
+          }
+        }}
+        sorting={sorting}
+      />
+    </>
   )
 }
