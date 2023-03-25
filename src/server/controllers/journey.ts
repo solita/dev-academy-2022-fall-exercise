@@ -125,11 +125,15 @@ export interface Journey_query_result {
 const get_journeys_params_schema = Joi.object({
   page: Joi.number().min(0).required(),
   limit: Joi.number().min(1).required(),
+  order: Joi.string().allow("asc", "desc").optional(),
+  sort: Joi.string().optional(),
 })
 
-interface Get_journeys_query_params {
+export interface Get_journeys_query_params {
   page: number
   limit: number
+  order: "asc" | "desc"
+  sort: keyof Stored_journey_data
 }
 //Get all journeys with pagination
 export async function get_journeys(
@@ -137,24 +141,27 @@ export async function get_journeys(
   res: Response
 ) {
   try {
-    const { page, limit } = req.query
-    if (!page || !limit) {
-      return res.status(400).json({
-        message: "Page or limit not provided",
-      })
-    }
-
-    const params_validation = get_journeys_params_schema.validate({ page, limit })
+    const { page, limit, order, sort } = req.query
+    const params_validation = get_journeys_params_schema.validate({
+      page,
+      limit,
+      order,
+      sort,
+    })
 
     if (params_validation.error) {
       errorLog("Invalid params :", params_validation.error)
       return res.status(400).json({
-        message: "Invalid page or limit",
+        message: "Invalid query params : " + params_validation.error.message,
       })
     }
 
     const skip = page * limit
-    const journeys = await Journey.find().skip(skip).limit(limit)
+    let journeys = await Journey.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ [sort]: order })
+
     const total_journeys = await Journey.countDocuments()
     const total_pages = Math.ceil(total_journeys / limit)
 

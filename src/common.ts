@@ -21,7 +21,7 @@ export interface Journey_data {
 }
 
 export interface Stored_journey_data extends Journey_data {
-  id: string;
+  _id: string;
 }
 
 export interface Station_csv_data {

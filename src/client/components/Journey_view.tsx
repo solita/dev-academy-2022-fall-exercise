@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react"
 import {
   EuiBasicTable,
   EuiBasicTableColumn,
-  EuiForm,
-  EuiFormRow,
   EuiSearchBar,
   EuiSearchBarProps,
   EuiTableSortingType,
@@ -15,13 +13,16 @@ import axios from "axios"
 import moment from "moment"
 import { uniqBy } from "lodash"
 import { Journey_data, Stored_journey_data } from "../../common"
-import { Journey_query_result } from "../../server/controllers/journey"
+import {
+  Get_journeys_query_params,
+  Journey_query_result,
+} from "../../server/controllers/journey"
 
 export const Journey_view = () => {
   const [is_loading, set_is_loading] = useState(false)
   const [journey_data, set_journey_data] = useState<Stored_journey_data[]>([])
   const [sorting, set_sorting] = useState<EuiTableSortingType<Stored_journey_data>>({
-    sort: { field: "id", direction: "desc" },
+    sort: { field: "_id", direction: "desc" },
   })
   const [search_query, set_search_query] = useState<Query | string>("")
   const [error, set_error] = useState<Error | null>(null)
@@ -36,25 +37,33 @@ export const Journey_view = () => {
   //Fetch data from the server
   const get_journey_data = async () => {
     try {
+      if (!sorting || !sorting.sort) throw "Sorting is not defined"
+
+      const params: Get_journeys_query_params = {
+        page: pagination.pageIndex,
+        limit: pagination.pageSize,
+        sort: sorting.sort.field,
+        order: sorting.sort.direction,
+      }
       const response = await axios.get<Journey_query_result>("/journeys", {
-        params: { page: pagination.pageIndex, limit: pagination.pageSize },
+        params,
       })
       set_journey_data(response.data.journeys)
       set_pagination({
         ...pagination,
         totalItemCount: response.data.total_journeys,
       })
-      set_is_loading(false)
     } catch (error) {
       console.log(error)
     }
+    set_is_loading(false)
   }
 
   //Fetch data on page load and when pagination changes
   useEffect(() => {
     set_is_loading(true)
     get_journey_data()
-  }, [pagination.pageIndex, pagination.pageSize])
+  }, [pagination.pageIndex, pagination.pageSize, sorting])
 
   //Create filters for the search bar
   const filters: SearchFilterConfig[] = [
@@ -113,6 +122,7 @@ export const Journey_view = () => {
     {
       field: "covered_distance",
       name: "Covered distance",
+      sortable: true,
       //Display distance in a more readable formate
       render: (covered_distance: number) => {
         if (covered_distance < 1000) {
@@ -121,14 +131,13 @@ export const Journey_view = () => {
           return `${(covered_distance / 1000).toFixed(2)} km`
         }
       },
-      sortable: true,
     },
     {
       field: "duration",
       name: "Duration",
+      sortable: true,
       //Display duration in a more readable formate
       render: (duration: number) => moment.duration(duration, "seconds").humanize(),
-      sortable: true,
     },
   ]
 
