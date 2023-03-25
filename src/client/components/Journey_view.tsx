@@ -20,7 +20,7 @@ import {
   Journey_query_result,
 } from "../../server/controllers/journey"
 
-export const Journey_view = () => {
+const Journey_view = () => {
   const [is_loading, set_is_loading] = useState(false)
   const [journey_data, set_journey_data] = useState<Stored_journey_data[]>([])
   const [sorting, set_sorting] = useState<EuiTableSortingType<Stored_journey_data>>({
@@ -173,3 +173,5 @@ export const Journey_view = () => {
     </EuiFlexGroup>
   )
 }
+
+export default Journey_view

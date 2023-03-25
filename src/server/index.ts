@@ -6,6 +6,7 @@ import mongoose from "mongoose"
 
 import app_router from "./routes/app"
 import journey_router from "./routes/journey"
+import station_router from "./routes/station"
 import { initialize_config_collection } from "./models/config"
 import {
   clear_journeys,
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, "../../", "public")))
 
 app.use("/", app_router)
 app.use("/journeys", journey_router)
+app.use("/stations", station_router)
 
 //Initialize the database and import csv data if it has not been imported yet.
 async function start_database() {

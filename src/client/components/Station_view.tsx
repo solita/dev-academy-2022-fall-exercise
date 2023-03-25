@@ -19,7 +19,7 @@ import {
   Station_query_result,
 } from "../../server/controllers/station"
 
-export const Station_view = () => {
+const Station_view = () => {
   const [is_loading, set_is_loading] = useState(false)
   const [station_data, set_station_data] = useState<Stored_station_data[]>([])
   const [sorting, set_sorting] = useState<EuiTableSortingType<Stored_station_data>>({
@@ -208,3 +208,5 @@ export const Station_view = () => {
     </EuiFlexGroup>
   )
 }
+
+export default Station_view
