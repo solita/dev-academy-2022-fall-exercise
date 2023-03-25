@@ -143,7 +143,6 @@ export async function get_journeys(
   try {
     let { page, limit, order, sort } = req.query
 
-    debugLog("type of limit", typeof limit, "type of page", typeof page, req.query)
     //Query params are always strings, so we need to convert them to numbers
     page = parseInt(page as string)
     limit = parseInt(limit as string)
@@ -167,7 +166,6 @@ export async function get_journeys(
       _id: order === "asc" ? 1 : -1, // explicitly specify sort order for _id
       [sort]: order === "asc" ? 1 : -1, // sort by field
     }
-    debugLog("type of limit", typeof limit, "type of page", typeof page, req.query)
     //This will ensure that the documents returned form skip and limit will be sorted
     const journeys = await Journey.aggregate([
       //@ts-ignore-next-line

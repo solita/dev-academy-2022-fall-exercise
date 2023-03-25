@@ -17,7 +17,7 @@ import { csv_data_is_loaded } from "./controllers/config"
 import {
   clear_stations,
   import_stations_csv_to_database,
-} from "./controllers/stations"
+} from "./controllers/station"
 const debugLog = debug("app:server:log")
 const errorLog = debug("app:server:error")
 

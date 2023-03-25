@@ -4,9 +4,11 @@ import fs from "fs"
 import { csv_station_schema } from "../models/station"
 import Station from "../models/station"
 import { csv_data_is_loaded } from "./config"
-import { Station_csv_data, Station_data } from "../../common"
+import { Station_csv_data, Station_data, Stored_station_data } from "../../common"
+import { Request, Response } from "express"
 
 import debug from "debug"
+import Joi from "joi"
 const debugLog = debug("app:Station_controller:log")
 const errorLog = debug("app:Station_controller:error")
 
@@ -61,7 +63,10 @@ function read_csv_Station_data(filePath: string): Promise<void> {
         const Station_csv_data_validation = csv_station_schema.validate(record)
         if (Station_csv_data_validation.error) {
           //If the data is not valid, then log the error and continue.
-          errorLog("Invalid journey data found, skipping it:", Station_csv_data_validation.error)
+          errorLog(
+            "Invalid station data found, skipping it:",
+            Station_csv_data_validation.error
+          )
           continue
         }
 
@@ -91,9 +96,9 @@ function read_csv_Station_data(filePath: string): Promise<void> {
       resolve()
     })
 
-    parser.on('skip', (error) => {
+    parser.on("skip", (error) => {
       errorLog("Skipping line in csv file due to error :", error.message)
-    });  
+    })
 
     parser.on("error", (error: any) => {
       errorLog("Parsing error :", error)
@@ -107,4 +112,74 @@ function read_csv_Station_data(filePath: string): Promise<void> {
 async function save_station_data(data: Station_data) {
   const new_station = new Station(data)
   await new_station.save()
+}
+
+export interface Station_query_result {
+  stations: Stored_station_data[]
+  total_stations: number
+  total_pages: number
+}
+
+const get_stations_params_schema = Joi.object({
+  page: Joi.number().min(0).required(),
+  limit: Joi.number().min(1).required(),
+  order: Joi.string().allow("asc", "desc").required(),
+  sort: Joi.string().optional().required(),
+})
+
+export interface Get_stations_query_params {
+  page: string | number
+  limit: string | number
+  order: "asc" | "desc"
+  sort: keyof Stored_station_data
+}
+//Get all stations with pagination
+export async function get_stations(
+  req: Request<{}, {}, {}, Get_stations_query_params>,
+  res: Response
+) {
+  try {
+    let { page, limit, order, sort } = req.query
+
+    //Query params are always strings, so we need to convert them to numbers
+    page = parseInt(page as string)
+    limit = parseInt(limit as string)
+
+    const params_validation = get_stations_params_schema.validate({
+      page,
+      limit,
+      order,
+      sort,
+    })
+
+    if (params_validation.error) {
+      errorLog("Invalid params :", params_validation.error)
+      return res.status(400).json({
+        message: "Invalid query params : " + params_validation.error.message,
+      })
+    }
+
+    const skip = page * limit
+    const sort_query = {
+      _id: order === "asc" ? 1 : -1, // explicitly specify sort order for _id
+      [sort]: order === "asc" ? 1 : -1, // sort by field
+    }
+    //This will ensure that the documents returned form skip and limit will be sorted
+    const stations = await Station.aggregate([
+      //@ts-ignore-next-line
+      { $sort: sort_query },
+      { $skip: skip },
+      //@ts-ignore-next-line
+      { $limit: limit },
+    ])
+    const total_stations = await Station.countDocuments()
+    const total_pages = Math.ceil(total_stations / limit)
+
+    res.status(200).json({ stations, total_stations, total_pages })
+  } catch (error) {
+    errorLog("Failed to get stations :", error)
+    res.status(500).json({
+      message: "Failed to get stations",
+    })
+  }
 }
