@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react"
 import {
   EuiBasicTable,
   EuiBasicTableColumn,
-  EuiFieldSearch,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiSearchBar,
   EuiSearchBarProps,
+  EuiTableSortingType,
   Pagination,
   Query,
   SearchFilterConfig,
@@ -22,6 +20,9 @@ import { Journey_query_result } from "../../server/controllers/journey"
 export const Journey_view = () => {
   const [is_loading, set_is_loading] = useState(false)
   const [journey_data, set_journey_data] = useState<Stored_journey_data[]>([])
+  const [sorting, set_sorting] = useState<EuiTableSortingType<Stored_journey_data>>({
+    sort: { field: "id", direction: "desc" },
+  })
   const [search_query, set_search_query] = useState<Query | string>("")
   const [error, set_error] = useState<Error | null>(null)
   const [pagination, set_pagination] = useState<Pagination>({
@@ -32,6 +33,7 @@ export const Journey_view = () => {
     showPerPageOptions: true,
   })
 
+  //Fetch data from the server
   const get_journey_data = async () => {
     try {
       const response = await axios.get<Journey_query_result>("/journeys", {
@@ -48,17 +50,20 @@ export const Journey_view = () => {
     }
   }
 
+  //Fetch data on page load and when pagination changes
   useEffect(() => {
     set_is_loading(true)
     get_journey_data()
   }, [pagination.pageIndex, pagination.pageSize])
 
+  //Create filters for the search bar
   const filters: SearchFilterConfig[] = [
     {
       type: "field_value_selection",
       field: "departure_station_name",
       name: "Departure station",
       multiSelect: false,
+      //Create options from the unique departure stations
       options: uniqBy(journey_data, "departure_station_name").map(
         (journey_data) => ({
           value: journey_data.departure_station_name,
@@ -71,6 +76,7 @@ export const Journey_view = () => {
       field: "return_station_name",
       name: "Return station",
       multiSelect: false,
+      //Create options from the unique return stations
       options: uniqBy(journey_data, "return_station_name").map((journey_data) => ({
         value: journey_data.return_station_name,
         view: journey_data.return_station_name,
@@ -78,11 +84,12 @@ export const Journey_view = () => {
     },
   ]
 
+  //Filter the data based on the search query
   const queried_items = EuiSearchBar.Query.execute(search_query, journey_data, {
     defaultFields: ["departure_station_name", "return_station_name", "t"],
   })
 
-  const onChange: EuiSearchBarProps["onChange"] = ({ query, error }) => {
+  const on_search_change: EuiSearchBarProps["onChange"] = ({ query, error }) => {
     if (error) {
       console.log(error)
       set_error(error)
@@ -119,10 +126,12 @@ export const Journey_view = () => {
     {
       field: "duration",
       name: "Duration",
+      //Display duration in a more readable formate
       render: (duration: number) => moment.duration(duration, "seconds").humanize(),
       sortable: true,
     },
   ]
+
   return (
     <EuiForm fullWidth>
       <EuiFormRow isInvalid={!!error} error={error?.message} fullWidth>
@@ -131,7 +140,7 @@ export const Journey_view = () => {
             incremental: true,
           }}
           filters={filters}
-          onChange={onChange}
+          onChange={on_search_change}
         />
       </EuiFormRow>
 
@@ -141,15 +150,13 @@ export const Journey_view = () => {
           items={queried_items}
           columns={columns}
           pagination={pagination}
-          onChange={({ page: { index, size } }) =>
+          onChange={({ page: { index, size }, sort }) => {
             set_pagination({ ...pagination, pageIndex: index, pageSize: size })
-          }
-          sorting={{
-            sort: {
-              field: "id",
-              direction: "desc",
-            },
+            if (sort) {
+              set_sorting({ sort: { field: sort.field, direction: sort.direction } })
+            }
           }}
+          sorting={sorting}
         />
       </EuiFormRow>
     </EuiForm>
