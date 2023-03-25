@@ -22,23 +22,24 @@ export const Journey_view = () => {
   const [is_loading, set_is_loading] = useState(false)
   const [journey_data, set_journey_data] = useState<Stored_journey_data[]>([])
   const [sorting, set_sorting] = useState<EuiTableSortingType<Stored_journey_data>>({
-    sort: { field: "_id", direction: "desc" },
+    sort: { field: "departure_station_name", direction: "asc" },
   })
   const [search_query, set_search_query] = useState<Query | string>("")
-  const [error, set_error] = useState<Error | null>(null)
   const [pagination, set_pagination] = useState<Pagination>({
     pageIndex: 0,
     pageSize: 10,
-    totalItemCount: 3000,
+    totalItemCount: 0,
     pageSizeOptions: [10, 25, 50],
     showPerPageOptions: true,
   })
+  const [error, set_error] = useState<string | undefined>(undefined)
 
-  //Fetch data from the server
   const get_journey_data = async () => {
+    set_error(undefined)
     try {
       if (!sorting || !sorting.sort) throw "Sorting is not defined"
 
+      //Sorting needs to be manually controlled while using filters and pagination
       const params: Get_journeys_query_params = {
         page: pagination.pageIndex,
         limit: pagination.pageSize,
@@ -54,7 +55,8 @@ export const Journey_view = () => {
         totalItemCount: response.data.total_journeys,
       })
     } catch (error) {
-      console.log(error)
+      set_error(error as string)
+      console.error(error)
     }
     set_is_loading(false)
   }
@@ -100,10 +102,8 @@ export const Journey_view = () => {
 
   const on_search_change: EuiSearchBarProps["onChange"] = ({ query, error }) => {
     if (error) {
-      console.log(error)
-      set_error(error)
+      console.error(error)
     } else {
-      set_error(null)
       set_search_query(query)
     }
   }
@@ -153,6 +153,7 @@ export const Journey_view = () => {
 
       <EuiBasicTable
         loading={is_loading}
+        error={error}
         items={queried_items}
         columns={columns}
         pagination={pagination}

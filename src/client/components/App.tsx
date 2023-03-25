@@ -3,13 +3,17 @@ import React, { useEffect } from "react"
 import { FC } from "react"
 import "@elastic/eui/dist/eui_theme_dark.css"
 
-import { EuiProvider } from "@elastic/eui"
+import { EuiPage, EuiPageBody, EuiProvider } from "@elastic/eui"
 import { Journey_view } from "./Journey_view"
 
 const App: FC = () => {
   return (
     <EuiProvider colorMode="dark">
-      <Journey_view />
+      <EuiPage>
+        <EuiPageBody>
+          <Journey_view />
+        </EuiPageBody>
+      </EuiPage>
     </EuiProvider>
   )
 }

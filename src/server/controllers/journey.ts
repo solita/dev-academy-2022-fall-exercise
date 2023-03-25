@@ -125,13 +125,13 @@ export interface Journey_query_result {
 const get_journeys_params_schema = Joi.object({
   page: Joi.number().min(0).required(),
   limit: Joi.number().min(1).required(),
-  order: Joi.string().allow("asc", "desc").optional(),
-  sort: Joi.string().optional(),
+  order: Joi.string().allow("asc", "desc").required(),
+  sort: Joi.string().optional().required(),
 })
 
 export interface Get_journeys_query_params {
-  page: number
-  limit: number
+  page: string | number
+  limit: string | number
   order: "asc" | "desc"
   sort: keyof Stored_journey_data
 }
@@ -141,7 +141,13 @@ export async function get_journeys(
   res: Response
 ) {
   try {
-    const { page, limit, order, sort } = req.query
+    let { page, limit, order, sort } = req.query
+
+    debugLog("type of limit", typeof limit, "type of page", typeof page, req.query)
+    //Query params are always strings, so we need to convert them to numbers
+    page = parseInt(page as string)
+    limit = parseInt(limit as string)
+
     const params_validation = get_journeys_params_schema.validate({
       page,
       limit,
@@ -157,11 +163,19 @@ export async function get_journeys(
     }
 
     const skip = page * limit
-    let journeys = await Journey.find()
-      .skip(skip)
-      .limit(limit)
-      .sort({ [sort]: order })
-
+    const sort_query = {
+      _id: order === "asc" ? 1 : -1, // explicitly specify sort order for _id
+      [sort]: order === "asc" ? 1 : -1, // sort by field
+    }
+    debugLog("type of limit", typeof limit, "type of page", typeof page, req.query)
+    //This will ensure that the documents returned form skip and limit will be sorted
+    const journeys = await Journey.aggregate([
+      //@ts-ignore-next-line
+      { $sort: sort_query },
+      { $skip: skip },
+      //@ts-ignore-next-line
+      { $limit: limit },
+    ])
     const total_journeys = await Journey.countDocuments()
     const total_pages = Math.ceil(total_journeys / limit)
 
