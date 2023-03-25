@@ -5,6 +5,8 @@ import {
   EuiFieldSearch,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiForm,
+  EuiFormRow,
   EuiSearchBar,
   EuiSearchBarProps,
   Pagination,
@@ -18,8 +20,10 @@ import { Journey_data, Stored_journey_data } from "../../common"
 import { Journey_query_result } from "../../server/controllers/journey"
 
 export const Journey_view = () => {
+  const [is_loading, set_is_loading] = useState(false)
   const [journey_data, set_journey_data] = useState<Stored_journey_data[]>([])
   const [search_query, set_search_query] = useState<Query | string>("")
+  const [error, set_error] = useState<Error | null>(null)
   const [pagination, set_pagination] = useState<Pagination>({
     pageIndex: 0,
     pageSize: 10,
@@ -33,54 +37,21 @@ export const Journey_view = () => {
       const response = await axios.get<Journey_query_result>("/journeys", {
         params: { page: pagination.pageIndex, limit: pagination.pageSize },
       })
-      console.log("journey data length", response.data.journeys.length)
-      console.log("total_journeys", response.data.total_journeys)
-      console.log("total_pages", response.data.total_journeys)
       set_journey_data(response.data.journeys)
       set_pagination({
         ...pagination,
         totalItemCount: response.data.total_journeys,
       })
+      set_is_loading(false)
     } catch (error) {
       console.log(error)
     }
   }
 
   useEffect(() => {
+    set_is_loading(true)
     get_journey_data()
   }, [pagination.pageIndex, pagination.pageSize])
-
-  const columns: EuiBasicTableColumn<Journey_data>[] = [
-    {
-      field: "departure_station_name",
-      name: "Departure station",
-      sortable: true,
-    },
-    {
-      field: "return_station_name",
-      name: "Return station",
-      sortable: true,
-    },
-    {
-      field: "covered_distance",
-      name: "Covered distance",
-      //Display distance in a more readable formate
-      render: (covered_distance: number) => {
-        if (covered_distance < 1000) {
-          return `${covered_distance} m`
-        } else {
-          return `${(covered_distance / 1000).toFixed(2)} km`
-        }
-      },
-      sortable: true,
-    },
-    {
-      field: "duration",
-      name: "Duration",
-      render: (duration: number) => moment.duration(duration, "seconds").humanize(),
-      sortable: true,
-    },
-  ]
 
   const filters: SearchFilterConfig[] = [
     {
@@ -114,28 +85,59 @@ export const Journey_view = () => {
   const onChange: EuiSearchBarProps["onChange"] = ({ query, error }) => {
     if (error) {
       console.log(error)
-      // setError(error);
+      set_error(error)
     } else {
-      // setError(null);
+      set_error(null)
       set_search_query(query)
     }
   }
 
+  const columns: EuiBasicTableColumn<Journey_data>[] = [
+    {
+      field: "departure_station_name",
+      name: "Departure station",
+      sortable: true,
+    },
+    {
+      field: "return_station_name",
+      name: "Return station",
+      sortable: true,
+    },
+    {
+      field: "covered_distance",
+      name: "Covered distance",
+      //Display distance in a more readable formate
+      render: (covered_distance: number) => {
+        if (covered_distance < 1000) {
+          return `${covered_distance} m`
+        } else {
+          return `${(covered_distance / 1000).toFixed(2)} km`
+        }
+      },
+      sortable: true,
+    },
+    {
+      field: "duration",
+      name: "Duration",
+      render: (duration: number) => moment.duration(duration, "seconds").humanize(),
+      sortable: true,
+    },
+  ]
   return (
-    <EuiFlexGroup gutterSize="m" direction="column">
-      <EuiFlexItem grow={false}>
+    <EuiForm fullWidth>
+      <EuiFormRow isInvalid={!!error} error={error?.message} fullWidth>
         <EuiSearchBar
           box={{
             incremental: true,
-            // schema,
           }}
           filters={filters}
           onChange={onChange}
         />
-      </EuiFlexItem>
+      </EuiFormRow>
 
-      <EuiFlexItem>
+      <EuiFormRow fullWidth>
         <EuiBasicTable
+          loading={is_loading}
           items={queried_items}
           columns={columns}
           pagination={pagination}
@@ -149,7 +151,7 @@ export const Journey_view = () => {
             },
           }}
         />
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      </EuiFormRow>
+    </EuiForm>
   )
 }
