@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react"
 import {
   EuiBasicTable,
   EuiBasicTableColumn,
+  EuiFlexGroup,
+  EuiFlexItem,
   EuiSearchBar,
   EuiSearchBarProps,
   EuiTableSortingType,
@@ -142,29 +144,32 @@ export const Journey_view = () => {
   ]
 
   return (
-    <>
-      <EuiSearchBar
-        box={{
-          incremental: true,
-        }}
-        filters={filters}
-        onChange={on_search_change}
-      />
-
-      <EuiBasicTable
-        loading={is_loading}
-        error={error}
-        items={queried_items}
-        columns={columns}
-        pagination={pagination}
-        onChange={({ page: { index, size }, sort }) => {
-          set_pagination({ ...pagination, pageIndex: index, pageSize: size })
-          if (sort) {
-            set_sorting({ sort: { field: sort.field, direction: sort.direction } })
-          }
-        }}
-        sorting={sorting}
-      />
-    </>
+    <EuiFlexGroup gutterSize="s" direction="column">
+      <EuiFlexItem grow={false}>
+        <EuiSearchBar
+          box={{
+            incremental: true,
+          }}
+          filters={filters}
+          onChange={on_search_change}
+        />
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiBasicTable
+          loading={is_loading}
+          error={error}
+          items={queried_items}
+          columns={columns}
+          pagination={pagination}
+          onChange={({ page: { index, size }, sort }) => {
+            set_pagination({ ...pagination, pageIndex: index, pageSize: size })
+            if (sort) {
+              set_sorting({ sort: { field: sort.field, direction: sort.direction } })
+            }
+          }}
+          sorting={sorting}
+        />
+      </EuiFlexItem>
+    </EuiFlexGroup>
   )
 }
