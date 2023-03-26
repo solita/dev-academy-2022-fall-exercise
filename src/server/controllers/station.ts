@@ -162,10 +162,11 @@ export async function get_stations(
 
     const skip = page * limit
     const stations = await Station.find().skip(skip).limit(limit)
-    //sort stations by the given sort parameter manually as mongoose sort applies to all documents in the collection,
+    //sort journeys by the given sort parameter manually, 
+    //as mongoose sort() applies to all documents in the collection,
     //not just the ones that are returned by the query.
     stations.sort((a, b) => {
-      //@ts-ignore
+      //@ts-ignore - sort will always be a valid key
       if (a[sort] < b[sort]) {
         return order === "asc" ? -1 : 1
       }
