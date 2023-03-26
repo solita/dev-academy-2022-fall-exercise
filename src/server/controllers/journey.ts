@@ -162,18 +162,21 @@ export async function get_journeys(
     }
 
     const skip = page * limit
-    const sort_query = {
-      _id: order === "asc" ? 1 : -1, // explicitly specify sort order for _id
-      [sort]: order === "asc" ? 1 : -1, // sort by field
-    }
-    //This will ensure that the documents returned form skip and limit will be sorted
-    const journeys = await Journey.aggregate([
-      //@ts-ignore-next-line
-      { $sort: sort_query },
-      { $skip: skip },
-      //@ts-ignore-next-line
-      { $limit: limit },
-    ])
+    const journeys = await Journey.find().skip(skip).limit(limit)
+    //sort stations by the given sort parameter manually,
+    //as mongoose sort() applies to all documents in the collection,
+    //not just the ones that are returned by the query.
+    journeys.sort((a, b) => {
+      //@ts-ignore - sort will always be a valid key
+      if (a[sort] < b[sort]) {
+        return order === "asc" ? -1 : 1
+      }
+      //@ts-ignore
+      if (a[sort] > b[sort]) {
+        return order === "asc" ? 1 : -1
+      }
+      return 0
+    })
     const total_journeys = await Journey.countDocuments()
     const total_pages = Math.ceil(total_journeys / limit)
 
