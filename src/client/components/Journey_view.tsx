@@ -76,7 +76,7 @@ const Journey_view = () => {
       field: "departure_station_name",
       name: "Departure station",
       multiSelect: false,
-      //Create options from the unique departure stations
+      //Provide unique options based on departure stations
       options: uniqBy(journey_data, "departure_station_name").map(
         (journey_data) => ({
           value: journey_data.departure_station_name,
@@ -89,7 +89,7 @@ const Journey_view = () => {
       field: "return_station_name",
       name: "Return station",
       multiSelect: false,
-      //Create options from the unique return stations
+      //Provide unique options based on return stations
       options: uniqBy(journey_data, "return_station_name").map((journey_data) => ({
         value: journey_data.return_station_name,
         view: journey_data.return_station_name,
