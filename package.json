@@ -3,14 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "type_check": "tsc --noEmit",
     "dev_build": "yarn webpack --config ./build/webpack/webpack.dev.js",
     "start": "DEBUG=app* ts-node ./bin/www",
-    "dev": "yarn dev_build && yarn start",
+    "dev": "yarn type_check yarn dev_build && yarn start",
     "docker_stop": "docker-compose -f ./docker/docker-compose.yml stop",
     "docker_build": "docker-compose -f ./docker/docker-compose.yml build",
     "docker_start": "docker-compose -f ./docker/docker-compose.yml up -d",
     "docker_restart": "yarn docker_stop && yarn docker_start",
-    "docker": "yarn docker_build && yarn docker_restart"
+    "docker": "yarn type_check && yarn docker_build && yarn docker_restart"
   },
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
