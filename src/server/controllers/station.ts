@@ -6,6 +6,7 @@ import Station from "../models/station"
 import { csv_data_is_loaded } from "./config"
 import { Station_csv_data, Station_data, Stored_station_data } from "../../common"
 import { Request, Response } from "express"
+import { Document } from "mongoose"
 
 import debug from "debug"
 import Joi from "joi"
@@ -160,18 +161,21 @@ export async function get_stations(
     }
 
     const skip = page * limit
-    const sort_query = {
-      _id: order === "asc" ? 1 : -1, // explicitly specify sort order for _id
-      [sort]: order === "asc" ? 1 : -1, // sort by field
-    }
-    //This will ensure that the documents returned form skip and limit will be sorted
-    const stations = await Station.aggregate([
-      //@ts-ignore-next-line
-      { $sort: sort_query },
-      { $skip: skip },
-      //@ts-ignore-next-line
-      { $limit: limit },
-    ])
+    const stations = await Station.find().skip(skip).limit(limit)
+    //sort stations by the given sort parameter manually as mongoose sort applies to all documents in the collection,
+    //not just the ones that are returned by the query.
+    stations.sort((a, b) => {
+      //@ts-ignore
+      if (a[sort] < b[sort]) {
+        return order === "asc" ? -1 : 1
+      }
+      //@ts-ignore
+      if (a[sort] > b[sort]) {
+        return order === "asc" ? 1 : -1
+      }
+      return 0
+    })
+
     const total_stations = await Station.countDocuments()
     const total_pages = Math.ceil(total_stations / limit)
 
