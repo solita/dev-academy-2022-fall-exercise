@@ -75,19 +75,19 @@ const Station_view = () => {
       field: "kapasiteet",
       name: "Capacity",
       multiSelect: false,
-      operator: "lte",
+      operator: "gte",
       options: [
         {
           value: 10,
-          view: "<=10",
+          view: "10 or more",
         },
         {
           value: 25,
-          view: "<=25",
+          view: "25 or more",
         },
         {
           value: 50,
-          view: "<=50",
+          view: "50 or more",
         },
       ],
     },
