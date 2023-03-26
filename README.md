@@ -1,24 +1,12 @@
 # Helsinki city bike app (Dev Academy pre-assignment)
-## Stuff to do
 
-**Important!** Implementing all of the proposed features is not needed for a good exercise result. You may also concentrate on:
+## Prerequisites
+- Have docker installed on your machine.
 
-* Good documentation (readme/other docs)
-* Proper git usage (small commits, informative commit messages)
-* Tests
-* Getting features complete
-* Writing good code
+## How to run.
+`yarn docker`
 
-Which are all highly valued in a good repository.
-
-You can read more about tips from Solita Dev Blog: [Do's and Dont's of Dev Academy Pre-assignments](https://dev.solita.fi/2021/11/04/how-to-pre-assignments.html)
-
-Also you can read Solita Dev Blog: [Testing Primer](https://dev.solita.fi/2022/11/01/testing-primer-dev-academy.html)
-
-## Functional requirements
-
-Focus on the recommended features. For extra points, you might want to also complete some additional features. You can also come up with extra features, if you do, please document them in the readme!
-
+## TODO
 ### Data import
 
 #### Recommended
@@ -69,6 +57,7 @@ Focus on the recommended features. For extra points, you might want to also comp
 * Ability to filter all the calculations per month
 
 ## Extra
+* Add test suite
 * Endpoints to store new journeys data or new bicycle stations
 * ~~Running backend in Docker~~
 * Running backend in Cloud
