@@ -55,7 +55,6 @@ Focus on the recommended features. For extra points, you might want to also comp
 ### Single station view
 
 #### Recommended
-
 * Station name
 * Station address
 * Total number of journeys starting from the station
@@ -70,7 +69,6 @@ Focus on the recommended features. For extra points, you might want to also comp
 * Ability to filter all the calculations per month
 
 ## Extra
-
 * Endpoints to store new journeys data or new bicycle stations
 * ~~Running backend in Docker~~
 * Running backend in Cloud

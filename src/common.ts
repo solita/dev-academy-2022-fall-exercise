@@ -56,6 +56,6 @@ export interface Station_data {
   y: number
 }
 
-export interface Stored_station_data extends Journey_data {
+export interface Stored_station_data extends Station_data {
   _id: string;
 }
