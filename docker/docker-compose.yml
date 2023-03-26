@@ -16,7 +16,7 @@ services:
       - PORT=8080
       - NODE_ENV=development
       - MONGO_URI=mongodb://mongo:27017/mydatabase
-    command: yarn dev
+    command: yarn start
     depends_on:
       - mongo
 
