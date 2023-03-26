@@ -45,12 +45,12 @@ Focus on the recommended features. For extra points, you might want to also comp
 
 #### Recommended
 
-* List all the stations
+* ~~List all the stations~~
 
 #### Additional
 
-* Pagination
-* Searching
+* ~~Pagination~~
+* ~~Searching~~
 
 ### Single station view
 

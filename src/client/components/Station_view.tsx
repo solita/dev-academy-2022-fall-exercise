@@ -95,7 +95,7 @@ const Station_view = () => {
 
   //Filter the data based on the search query
   const queried_items = EuiSearchBar.Query.execute(search_query, station_data, {
-    defaultFields: ["kapasiteet"],
+    defaultFields: ["kapasiteet", "nimi", "namn", "osoite"],
   })
 
   const on_search_change: EuiSearchBarProps["onChange"] = ({ query, error }) => {
