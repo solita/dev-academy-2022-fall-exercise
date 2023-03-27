@@ -4,3 +4,5 @@ test_datasets
 
 node_modules/
 .eslintcache
+
+coverage
