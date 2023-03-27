@@ -5,5 +5,5 @@ import App from "../src/client/components/App"
 
 it("renders without crashing", () => {
   render(<App />)
-  expect(screen.getByText("Journey")).toBeInTheDocument()
+  expect(screen.getByText("Journeys")).toBeInTheDocument()
 })
