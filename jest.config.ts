@@ -6,10 +6,8 @@
 module.exports = {
   preset: "ts-jest",
   transform: {
-    "\\.[jt]sx?$": "babel-jest",
+    "\\.[jt]sx?$": "ts-jest",
   },
-  //Exclude node_modules from transform
-  transformIgnorePatterns: ["/node_modules/"],
   //Exclude uuid from Babel transpilation
   moduleNameMapper: {
     "^uuid$": "<rootDir>/node_modules/uuid",
@@ -17,8 +15,16 @@ module.exports = {
       "<rootDir>/__mocks__/file_mock.js",
     "\\.(css|less)$": "identity-obj-proxy",
   },
+
+  transformIgnorePatterns: ["/node_modules/"],
+  coveragePathIgnorePatterns: ["/node_modules/"],
+
+  //ignore files in __tests__/utils from testing
+  testPathIgnorePatterns: ["<rootDir>/__tests__/utils/"],
+
+  testEnvironment: "js-dom",
+
   clearMocks: true,
   collectCoverage: true,
   coverageDirectory: "coverage",
-  testEnvironment: "jsdom",
 }
