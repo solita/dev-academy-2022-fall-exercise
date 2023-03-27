@@ -21,8 +21,10 @@ module.exports = {
 
   //ignore files in __tests__/utils from testing
   testPathIgnorePatterns: ["<rootDir>/__tests__/utils/"],
-
-  testEnvironment: "js-dom",
+  setupFilesAfterEnv: [
+    "@testing-library/jest-dom/extend-expect"
+  ],
+  testEnvironment: "jsdom",
 
   clearMocks: true,
   collectCoverage: true,
