@@ -152,6 +152,7 @@ const Journey_view = () => {
     <EuiFlexGroup gutterSize="s" direction="column">
       <EuiFlexItem grow={false}>
         <EuiSearchBar
+          data-testid="search_bar"
           box={{
             incremental: true,
           }}
