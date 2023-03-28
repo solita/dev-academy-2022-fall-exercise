@@ -99,7 +99,12 @@ const Journey_view = () => {
 
   //Filter the data based on the search query
   const queried_items = EuiSearchBar.Query.execute(search_query, journey_data, {
-    defaultFields: ["departure_station_name", "return_station_name", "duration", "covered_distance"],
+    defaultFields: [
+      "departure_station_name",
+      "return_station_name",
+      "duration",
+      "covered_distance",
+    ],
   })
 
   const on_search_change: EuiSearchBarProps["onChange"] = ({ query, error }) => {
@@ -156,6 +161,7 @@ const Journey_view = () => {
       </EuiFlexItem>
       <EuiFlexItem>
         <EuiBasicTable
+          data-testid="journey_table"
           loading={is_loading}
           error={error}
           items={queried_items}
