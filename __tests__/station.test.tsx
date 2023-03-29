@@ -55,9 +55,7 @@ describe("Station", () => {
     const column_button = container.querySelector(".euiTableHeaderButton-isSorted")
     if (!column_button) throw new Error("column button not found")
 
-    const table_item = await screen.findByText(
-      dummy_station_A.nimi
-    )
+    const table_item = await screen.findByText(dummy_station_A.nimi)
 
     expect(column_button).toBeInTheDocument()
     expect(table_item).toBeInTheDocument()
@@ -74,9 +72,7 @@ describe("Station", () => {
 
     // Wait for the table to re-render with the sorted data
     await waitFor(() =>
-      expect(
-        screen.getByText(dummy_station_A.nimi)
-      ).toBeInTheDocument()
+      expect(screen.getByText(dummy_station_A.nimi)).toBeInTheDocument()
     )
 
     // Get an array of all the table cells in the first column
@@ -88,5 +84,24 @@ describe("Station", () => {
     const new_order = new_table_cells.map((row) => row.textContent)
 
     expect(new_order).not.toEqual(old_order)
+  })
+
+  it("Searches", async () => {
+    const { container } = render(<Station_view />)
+    const search_bar = container.querySelector(".euiFieldSearch")
+
+    if (!search_bar) throw new Error("search bar not found")
+
+    act(() => {
+      fireEvent.change(search_bar, {
+        target: { value: dummy_station_A.nimi },
+      })
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText(dummy_station_A.nimi)).toBeInTheDocument()
+    })
+
+    expect(screen.queryByText(dummy_station_B.nimi)).not.toBeInTheDocument()
   })
 })

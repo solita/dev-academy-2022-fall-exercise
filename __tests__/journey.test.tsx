@@ -91,4 +91,27 @@ describe("Journey", () => {
 
     expect(new_order).not.toEqual(old_order)
   })
+
+  it("Searches", async () => {
+    const { container } = render(<Journey_view />)
+    const search_bar = container.querySelector(".euiFieldSearch")
+
+    if (!search_bar) throw new Error("search bar not found")
+
+    act(() => {
+      fireEvent.change(search_bar, {
+        target: { value: dummy_journey_A.departure_station_name },
+      })
+    })
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(dummy_journey_A.departure_station_name)
+      ).toBeInTheDocument()
+    })
+
+    expect(
+      screen.queryByText(dummy_journey_B.departure_station_name)
+    ).not.toBeInTheDocument()
+  })
 })
