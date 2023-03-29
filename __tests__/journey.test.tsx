@@ -6,12 +6,14 @@ import { rest } from "msw"
 import server from "../__mocks__/server"
 
 describe("Journey", () => {
+  //Check that the component renders
   it("Renders", async () => {
     render(<Journey_view />)
     const element = await screen.findByTestId("journey_table")
     expect(element).toBeInTheDocument()
   })
 
+  //Check that the table gets and displays data
   it("Displays journey data", async () => {
     render(<Journey_view />)
     const element = await screen.findByText(dummy_journey_A.departure_station_name)
@@ -29,7 +31,7 @@ describe("Journey", () => {
 
         expect(sort).toBe("departure_station_name")
 
-        if (sort === "departure_station_name" && order === "asc") {
+        if (order === "asc") {
           return res(
             ctx.json({
               journeys: [dummy_journey_A, dummy_journey_B],
@@ -39,7 +41,7 @@ describe("Journey", () => {
           )
         }
 
-        if (sort === "departure_station_name" && order === "desc") {
+        if (order === "desc") {
           return res(
             ctx.json({
               journeys: [dummy_journey_B, dummy_journey_A],
@@ -50,7 +52,7 @@ describe("Journey", () => {
         }
       })
     )
-    
+
     const { container } = render(<Journey_view />)
     const column_button = container.querySelector(".euiTableHeaderButton-isSorted")
     if (!column_button) throw new Error("column button not found")
@@ -88,6 +90,5 @@ describe("Journey", () => {
     const new_order = new_table_cells.map((row) => row.textContent)
 
     expect(new_order).not.toEqual(old_order)
-    server.resetHandlers()
   })
 })

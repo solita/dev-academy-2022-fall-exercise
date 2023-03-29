@@ -27,38 +27,39 @@ export const dummy_journey_B: Stored_journey_data = {
 //List of journeys
 export const dummy_journeys: Stored_journey_data[] = [dummy_journey_A, dummy_journey_B]
 
-export const dummy_station: Stored_station_data = {
+//Values need to be unique to help with testing
+export const dummy_station_A: Stored_station_data = {
   _id: "1",
   fid: "1",
   station_id: "1",
-  nimi: "station_A",
-  namn: "station_A",
-  name: "station_A",
-  osoite: "address_A",
-  adress: "address_A",
-  kaupunki: "city_A",
-  stad: "city_A",
+  nimi: "finnish_station_A",
+  namn: "swedish_station_A",
+  name: "english_station_A",
+  osoite: "finnish_address_A",
+  adress: "swedish_address_A",
+  kaupunki: "finnish_city_A",
+  stad: "swedish_city_A",
   operaattor: "operator_A",
   kapasiteet: "10",
   x: 111.111,
   y: 111.111,
 }
 
-const dummy_station_B: Stored_station_data = {
+export const dummy_station_B: Stored_station_data = {
   _id: "2",
   fid: "2",
   station_id: "2",
-  nimi: "station_B",
-  namn: "station_B",
-  name: "station_B",
-  osoite: "address_B",
-  adress: "address_B",
-  kaupunki: "city_B",
-  stad: "city_B",
+  nimi: "finnish_station_B",
+  namn: "swedish_station_B",
+  name: "english_station_B",
+  osoite: "finnish_address_B",
+  adress: "swedish_address_B",
+  kaupunki: "finnish_city_B",
+  stad: "swedish_city_B",
   operaattor: "operator_B",
   kapasiteet: "20",
   x: 222.222,
   y: 222.222,
 }
 
-export const dummy_stations: Stored_station_data[] = [dummy_station, dummy_station_B]
+export const dummy_stations: Stored_station_data[] = [dummy_station_A, dummy_station_B]
