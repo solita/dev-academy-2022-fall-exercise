@@ -2,8 +2,8 @@ import React from "react"
 import Journey_view from "../src/client/components/Journey_view"
 import { screen, render, fireEvent, waitFor, act } from "@testing-library/react"
 import { dummy_journey_A, dummy_journey_B } from "../__mocks__/data"
-import server from "__mocks__/server"
 import { rest } from "msw"
+import server from "../__mocks__/server"
 
 describe("Journey", () => {
   it("Renders", async () => {
@@ -19,7 +19,8 @@ describe("Journey", () => {
   })
 
   it("Sort journey data", async () => {
-    //mock the server response for sorting table items
+    //Mock the server response for sorting table items
+    //This runtime api will be replaced after the test
     server.use(
       rest.get("http://localhost/journeys", (req, res, ctx) => {
         //Get the sort query parameter
@@ -49,7 +50,7 @@ describe("Journey", () => {
         }
       })
     )
-
+    
     const { container } = render(<Journey_view />)
     const column_button = container.querySelector(".euiTableHeaderButton-isSorted")
     if (!column_button) throw new Error("column button not found")
@@ -67,10 +68,7 @@ describe("Journey", () => {
     })
     const old_order = table_rows.map((row) => row.textContent)
 
-    console.log("current order", old_order)
-
     act(() => {
-      console.log("button", column_button.textContent)
       fireEvent.click(column_button)
     })
 
@@ -88,8 +86,6 @@ describe("Journey", () => {
     })
 
     const new_order = new_table_cells.map((row) => row.textContent)
-
-    console.log("new order", new_order)
 
     expect(new_order).not.toEqual(old_order)
     server.resetHandlers()
