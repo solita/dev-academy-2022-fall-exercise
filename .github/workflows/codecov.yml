@@ -2,7 +2,7 @@ name: Codecov
 run-name: Running tests and getting coverage
 on: [push]
 jobs:
-  Run tests:
+  run_tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
