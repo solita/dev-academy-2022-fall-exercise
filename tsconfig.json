@@ -17,6 +17,5 @@
     "noFallthroughCasesInSwitch": true,
     "outDir": "./dist"
   },
-  "compileOnSave": true,
-  "include": ["."],
+  "exclude": ["node_modules", "dist"]
 }
