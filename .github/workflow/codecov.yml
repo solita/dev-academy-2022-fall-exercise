@@ -1,5 +1,6 @@
 name: Running Code Coverage
-
+uses: codecov/codecov-action@v3
+    
 on: [push, pull_request]
 
 jobs:
