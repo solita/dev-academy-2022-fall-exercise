@@ -1,9 +1,9 @@
 import React from "react"
-import Station_view from "../src/client/components/Station_view"
+import Station_view from "../components/Station_view"
 import { screen, render, act, fireEvent, waitFor } from "@testing-library/react"
-import { dummy_station_A, dummy_station_B } from "../__mocks__/data"
+import { dummy_station_A, dummy_station_B } from "../../__mocks__/data"
 import { rest } from "msw"
-import server from "../__mocks__/server"
+import server from "../../__mocks__/server"
 
 describe("Station", () => {
   it("Renders", async () => {

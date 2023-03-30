@@ -1,4 +1,4 @@
-import { Stored_journey_data, Stored_station_data } from "../src/common"
+import { Stored_journey_data, Stored_station_data } from "../common"
 
 export const dummy_journey_A: Stored_journey_data = {
   _id: "1",

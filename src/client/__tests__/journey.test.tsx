@@ -1,9 +1,9 @@
 import React from "react"
-import Journey_view from "../src/client/components/Journey_view"
+import Journey_view from "../components/Journey_view"
 import { screen, render, fireEvent, waitFor, act } from "@testing-library/react"
-import { dummy_journey_A, dummy_journey_B } from "../__mocks__/data"
+import { dummy_journey_A, dummy_journey_B } from "../../__mocks__/data"
 import { rest } from "msw"
-import server from "../__mocks__/server"
+import server from "../../__mocks__/server"
 
 describe("Journey", () => {
   //Check that the component renders

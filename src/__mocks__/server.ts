@@ -1,7 +1,7 @@
 import { DefaultBodyType, MockedRequest, rest, RestHandler } from "msw"
 import { setupServer } from "msw/node"
-import { Journey_query_result } from "../src/server/controllers/journey"
-import { Station_query_result } from "../src/server/controllers/station"
+import { Journey_query_result } from "../server/controllers/journey"
+import { Station_query_result } from "../server/controllers/station"
 import { dummy_journeys, dummy_stations } from "./data"
 
 export const dummy_journey_data: Journey_query_result = {
