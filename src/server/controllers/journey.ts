@@ -1,4 +1,4 @@
-import path, { resolve } from "path"
+import path from "path"
 import { Journey_csv_data, Journey_data, Stored_journey_data } from "../../common"
 import { parse } from "csv-parse"
 import fs from "fs"
@@ -136,8 +136,15 @@ export interface Journey_query_result {
 const get_journeys_params_schema = Joi.object({
   page: Joi.number().min(0).required(),
   limit: Joi.number().min(1).required(),
-  order: Joi.string().allow("asc", "desc").required(),
-  sort: Joi.string().optional().required(),
+  order: Joi.string().valid("asc", "desc").required(),
+  sort: Joi.string()
+    .valid(
+      "departure_station_name",
+      "return_station_name",
+      "covered_distance",
+      "duration"
+    )
+    .required(),
 })
 
 export interface Get_journeys_query_params {
