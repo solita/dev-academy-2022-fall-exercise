@@ -1,4 +1,4 @@
-import server from './src/__mocks__/server'
+import server from '../__mocks__/server'
 
 beforeAll(() => {
   // Enable the mocking in tests.
@@ -7,6 +7,7 @@ beforeAll(() => {
 
 afterEach(() => {
   // Reset any runtime handlers tests may use.
+  jest.restoreAllMocks()
   server.resetHandlers()
 })
 
