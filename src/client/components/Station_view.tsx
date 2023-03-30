@@ -143,6 +143,7 @@ const Station_view = () => {
       </EuiFlexItem>
       <EuiFlexItem>
         <EuiBasicTable
+          data-testid="station_table"
           loading={is_loading}
           error={error}
           items={queried_items}

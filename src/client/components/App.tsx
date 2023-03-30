@@ -27,7 +27,7 @@ const App: FC = () => {
   ]
   return (
     <EuiProvider colorMode="dark">
-      <EuiPage>
+      <EuiPage data-testid="app">
         <EuiPageBody>
           <EuiPageSection>
             <EuiTabbedContent

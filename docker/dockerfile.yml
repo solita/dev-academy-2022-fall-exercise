@@ -2,5 +2,5 @@ FROM node:18
 WORKDIR /home/node/app
 COPY ../package*.json ./
 RUN yarn install
-COPY ../ .
+COPY ../ ./
 EXPOSE 8080
