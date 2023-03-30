@@ -9,6 +9,7 @@ const config: Config = {
   clearMocks: true,
   collectCoverage: true,
   coverageDirectory: "<rootDir>/coverage",
+  watchPathIgnorePatterns: ['globalConfig'],
 }
 
 export default config

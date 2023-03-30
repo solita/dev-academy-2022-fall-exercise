@@ -1,7 +1,8 @@
 import type { Config } from "jest"
 
 const config: Config = {
-  preset: "ts-jest",
+  displayName: "backend",
+  preset: "@shelf/jest-mongodb",
   transform: {
     "\\.[jt]sx?$": "ts-jest",
   },
@@ -12,7 +13,6 @@ const config: Config = {
     "\\.(css|less)$": "identity-obj-proxy",
   },
   setupFilesAfterEnv: ["<rootDir>/test_setup.ts"],
-  testEnvironment: "node",
 }
 
 export default config

@@ -1,5 +1,8 @@
+import { Config } from "jest"
+
 //<rootDir> = /src/client/
-export default {
+const config: Config = {
+  displayName: "frontend",
   preset: "ts-jest",
   transform: {
     "\\.[jt]sx?$": "ts-jest",
@@ -16,3 +19,5 @@ export default {
   ],
   testEnvironment: "jsdom",
 }
+
+export default config
