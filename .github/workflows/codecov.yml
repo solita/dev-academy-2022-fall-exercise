@@ -6,6 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: install dependencies
+      run: yarn install
     - name: run tests
       run: yarn test
     - name: Upload coverage
