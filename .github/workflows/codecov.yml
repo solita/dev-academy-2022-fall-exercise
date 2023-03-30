@@ -2,8 +2,13 @@ name: Codecov
 run-name: Running tests and getting coverage
 on: [push]
 jobs:
-  run_tests:
+  upload_test_coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: codecov/codecov-action@v3
+    - uses: actions/checkout@v3
+    - name: run tests
+      run: yarn test
+    - name: Upload coverage
+    - uses: codecov/codecov-action@v3
+    with:
+      files: ./coverage/clover.xml
