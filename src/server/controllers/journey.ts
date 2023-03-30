@@ -41,7 +41,7 @@ export async function import_journey_csv_to_database() {
   }
 }
 
-function read_csv_journey_data(filePath: string): Promise<void> {
+export function read_csv_journey_data(filePath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     //BOM is a byte order mark, which is a special character that is used to indicate the endianness of a file.
     //This is needed to ensure that the parser can read the file correctly.
@@ -89,6 +89,17 @@ function read_csv_journey_data(filePath: string): Promise<void> {
           duration: parseInt(record["Duration (sec.)"]),
         }
 
+        //Check if covered distance has been parsed correctly
+        if (isNaN(results.covered_distance)) {
+          errorLog("Covered distance is not a number :", record)
+          continue
+        }
+        //Check if duration has been parsed correctly
+        if (isNaN(results.duration)) {
+          errorLog("Duration is not a number :", record)
+          continue
+        }
+
         //save the data to the database
         await save_journey_data(results)
       }
@@ -111,9 +122,9 @@ function read_csv_journey_data(filePath: string): Promise<void> {
   })
 }
 
-async function save_journey_data(data: Journey_data) {
+export async function save_journey_data(data: Journey_data) {
   const new_journey = new Journey(data)
-  await new_journey.save()
+  return new_journey.save()
 }
 
 export interface Journey_query_result {
