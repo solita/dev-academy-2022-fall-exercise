@@ -1,14 +1,23 @@
-name: Codecov
-run-name: Running tests and getting coverage
-on: [push]
+name: Test runner
+run-name: Running tests and uploading coverage to codecov
+on: [push, pull_request]
 jobs:
-  upload_test_coverage:
+  run-tests:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [19.x]
+
     steps:
     - uses: actions/checkout@v3
-    - name: install dependencies
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
       run: yarn install
-    - name: run tests
+    - name: Run tests
       run: yarn test
     - name: Upload coverage
       uses: codecov/codecov-action@v3
