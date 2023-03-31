@@ -165,5 +165,10 @@ describe("Journey Controller", () => {
     expect(mock_response.json.mock.calls[0][0].message).toBe(
       'Invalid query params : "sort" must be one of [departure_station_name, return_station_name, covered_distance, duration]'
     )
+
+    //clear database for test
+    await clear_journeys()
+    const document_count = await Journey.countDocuments()
+    expect(document_count).toBe(0)
   })
 })
