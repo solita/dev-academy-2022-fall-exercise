@@ -5,8 +5,9 @@ import { dummy_station_A } from "../../../__mocks__/data"
 import Station from "../../models/station"
 
 //Testing the routes from an external perspective
+//This will ensure that the routes exist and return the correct status codes
 describe("Station Routes", () => {
-  it("Should return 200 when getting stations", async () => {
+  it("/stations should exist and return 200 when getting stations", async () => {
     //store station data without _id
     const new_station = { ...dummy_station_A, _id: undefined }
     await save_station_data(new_station)
