@@ -6,7 +6,6 @@ import Station from "../models/station"
 import { csv_data_is_loaded } from "./config"
 import { Station_csv_data, Station_data, Stored_station_data } from "../../common"
 import { Request, Response } from "express"
-import { Document } from "mongoose"
 
 import debug from "debug"
 import Joi from "joi"
@@ -34,7 +33,7 @@ export async function import_stations_csv_to_database() {
     for (const file of csv_files) {
       debugLog(`Importing ${file} to the database`)
       const csv_file_path = path.join(datasets_path, file)
-      await read_csv_Station_data(csv_file_path)
+      await read_csv_station_data(csv_file_path)
     }
     debugLog("All station csv files imported to the database")
     return csv_data_is_loaded()
@@ -44,7 +43,7 @@ export async function import_stations_csv_to_database() {
   }
 }
 
-function read_csv_Station_data(filePath: string): Promise<void> {
+export function read_csv_station_data(filePath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     //BOM is a byte order mark, which is a special character that is used to indicate the endianness of a file.
     //This is needed to ensure that the parser can read the file correctly.
@@ -110,7 +109,7 @@ function read_csv_Station_data(filePath: string): Promise<void> {
   })
 }
 
-async function save_station_data(data: Station_data) {
+export async function save_station_data(data: Station_data) {
   const new_station = new Station(data)
   await new_station.save()
 }
@@ -124,8 +123,8 @@ export interface Station_query_result {
 const get_stations_params_schema = Joi.object({
   page: Joi.number().min(0).required(),
   limit: Joi.number().min(1).required(),
-  order: Joi.string().allow("asc", "desc").required(),
-  sort: Joi.string().optional().required(),
+  order: Joi.string().valid("asc", "desc").required(),
+  sort: Joi.string().valid("nimi", "namn", "osoite", "kapasiteet").required(),
 })
 
 export interface Get_stations_query_params {
@@ -162,7 +161,7 @@ export async function get_stations(
 
     const skip = page * limit
     const stations = await Station.find().skip(skip).limit(limit)
-    //sort journeys by the given sort parameter manually, 
+    //sort journeys by the given sort parameter manually,
     //as mongoose sort() applies to all documents in the collection,
     //not just the ones that are returned by the query.
     stations.sort((a, b) => {

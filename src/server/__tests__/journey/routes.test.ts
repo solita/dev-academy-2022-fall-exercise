@@ -4,6 +4,7 @@ import { save_journey_data } from "../../controllers/journey"
 import { dummy_journey_A } from "../../../__mocks__/data"
 import Journey from "../../models/journey"
 
+//Testing the routes from an external perspective
 describe("Journey Routes", () => {
   it("Should return 200 when getting journeys", async () => {
     //store journey data without _id

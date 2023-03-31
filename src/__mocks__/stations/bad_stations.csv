@@ -1,0 +1,5 @@
+FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+1,501,Hanasaari,Hanaholmen,Hanas
+~~~ invalid line ~~~
+3,505,Westendinasema,Westendstationen,Westendinasema,Westendintie 1,Westendvägen 1,Espoo,Esbo,CityBike Finland,16,24.805758,error
+4,507,Golfpolku,Golfstigen,Golfpolku,Golfpolku 3,Golfstigen 3,Espoo,Esbo,24.796136,60.168143,error,error,error,error

@@ -91,17 +91,6 @@ export function read_csv_journey_data(filePath: string): Promise<void> {
           duration: parseInt(record["Duration (sec.)"]),
         }
 
-        //Check if covered distance has been parsed correctly
-        if (isNaN(results.covered_distance)) {
-          errorLog("Covered distance is not a number :", record)
-          continue
-        }
-        //Check if duration has been parsed correctly
-        if (isNaN(results.duration)) {
-          errorLog("Duration is not a number :", record)
-          continue
-        }
-
         //save the data to the database
         await save_journey_data(results)
       }
