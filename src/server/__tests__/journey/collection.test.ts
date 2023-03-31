@@ -1,12 +1,15 @@
 import {
   clear_journeys,
   get_journeys,
+  import_journey_csv_to_database,
   read_csv_journey_data,
   save_journey_data,
 } from "../../controllers/journey"
 import { dummy_journey_A } from "../../../__mocks__/data"
 import Journey from "../../models/journey"
 import path from "path"
+import fs from "fs"
+  
 
 const mock_datasets_path = path.join(__dirname, "../../../", "__mocks__", "journeys")
 const good_journeys_csv_file = path.join(mock_datasets_path, "good_journeys.csv")
@@ -72,5 +75,21 @@ describe("Journey Collection", () => {
 
     const new_document_count = await Journey.countDocuments()
     expect(new_document_count).toBe(0)
+  })
+
+  it("Should throw an error if clear_journeys fails", async () => {
+    jest.spyOn(Journey, "deleteMany").mockImplementationOnce(() => {
+      throw new Error("Error")
+    })
+
+    await expect(clear_journeys()).rejects.toThrow("Error")
+  })
+
+  it("Should throw an error if csv datasets are not found", async () => {
+    jest.spyOn(fs, "readdirSync").mockImplementationOnce(() => {
+      throw new Error("Error")
+    })
+
+    await expect(import_journey_csv_to_database()).rejects.toThrow("Error")
   })
 })

@@ -63,8 +63,6 @@ async function start_database() {
   }
 }
 
-//Check the environment variable if app is in test mode.
-console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
 if (process.env.NODE_ENV === "test") {
   debugLog("Running in test mode, prevent app from connecting to database")
 } else {
