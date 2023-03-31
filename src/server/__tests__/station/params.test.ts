@@ -3,7 +3,7 @@ import {
   get_stations,
   save_station_data,
 } from "../../controllers/station"
-import { dummy_station_A } from "../../../__mocks__/data"
+import { dummy_station_A, dummy_station_B } from "../../../__mocks__/data"
 import Station from "../../models/station"
 
 //Testing the controller from an internal perspective
@@ -105,5 +105,79 @@ describe("Station Params", () => {
     await clear_stations()
     const document_count = await Station.countDocuments()
     expect(document_count).toBe(0)
+  })
+
+  it("Should sort items in desc order correctly", async () => {
+    //have two stations in the database for these tests
+    //@ts-ignore the id is not expected but it is removed
+    await save_station_data({ ...dummy_station_A, _id: undefined })
+    //@ts-ignore
+    await save_station_data({ ...dummy_station_B, _id: undefined })
+    const count = await Station.countDocuments()
+    expect(count).toBe(2)
+
+    const mock_request: any = {
+      query: {
+        page: 0,
+        limit: 10,
+        order: "desc",
+        sort: "nimi",
+      },
+    }
+
+    const mock_response: any = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn().mockReturnThis(),
+    }
+
+    await get_stations(mock_request, mock_response)
+    expect(mock_response.status).toBeCalledWith(200)
+
+    const stations = mock_response.json.mock.calls[0][0].stations 
+
+    const first_station = stations[0]
+    expect(first_station).toBeDefined()
+    const second_station = stations[1]
+    expect(second_station).toBeDefined()
+    
+    expect(first_station.nimi).toBe(dummy_station_B.nimi)
+    expect(second_station.nimi).toBe(dummy_station_A.nimi)
+  })
+
+  it("Should sort items in asc order correctly", async () => {
+    //have two stations in the database for these tests
+    //@ts-ignore the id is not expected but it is removed
+    await save_station_data({ ...dummy_station_A, _id: undefined })
+    //@ts-ignore
+    await save_station_data({ ...dummy_station_B, _id: undefined })
+    const count = await Station.countDocuments()
+    expect(count).toBe(2)
+
+    const mock_request: any = {
+      query: {
+        page: 0,
+        limit: 10,
+        order: "asc",
+        sort: "nimi",
+      },
+    }
+
+    const mock_response: any = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn().mockReturnThis(),
+    }
+
+    await get_stations(mock_request, mock_response)
+    expect(mock_response.status).toBeCalledWith(200)
+
+    const stations = mock_response.json.mock.calls[0][0].stations 
+
+    const first_station = stations[0]
+    expect(first_station).toBeDefined()
+    const second_station = stations[1]
+    expect(second_station).toBeDefined()
+    
+    expect(first_station.nimi).toBe(dummy_station_A.nimi)
+    expect(second_station.nimi).toBe(dummy_station_B.nimi)
   })
 })
