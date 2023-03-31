@@ -134,6 +134,7 @@ export interface Journey_query_result {
 }
 
 const get_journeys_params_schema = Joi.object({
+  //Joi will accept a string that can be converted to a number
   page: Joi.number().min(0).required(),
   limit: Joi.number().min(1).required(),
   order: Joi.string().valid("asc", "desc").required(),

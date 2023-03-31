@@ -38,6 +38,7 @@ app.use("/stations", station_router)
 //Initialize the database and import csv data if it has not been imported yet.
 async function start_database() {
   debugLog("Connecting to database")
+
   await mongoose.connect("mongodb://mongo:27017")
 
   try {
@@ -59,6 +60,13 @@ async function start_database() {
     errorLog(error)
   }
 }
-start_database()
+
+//Check the environment variable if app is in test mode.
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
+if (process.env.NODE_ENV === "test") {
+  debugLog("Running in test mode, prevent app from connecting to database")
+} else {
+  start_database()
+}
 
 module.exports = app

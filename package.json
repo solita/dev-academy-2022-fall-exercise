@@ -5,10 +5,10 @@
   "scripts": {
     "type_check": "tsc --noEmit",
     "start": "DEBUG=app* ts-node ./bin/www",
-    "test": "jest",
-    "backend_test": "jest --selectProjects backend",
+    "test": "jest NODE_ENV=test",
+    "backend_test": "jest --selectProjects backend NODE_ENV=test",
     "frontend_test": "jest --selectProjects frontend",
-    "dev_build": "yarn webpack --config ./build/webpack/webpack.dev.js",
+    "dev_build": "NODE_ENV=development yarn webpack --config ./build/webpack/webpack.dev.js --mode development",
     "dev": "yarn dev_build && yarn start",
     "docker_stop": "docker-compose -f ./docker/docker-compose.yml stop",
     "docker_build": "docker-compose -f ./docker/docker-compose.yml build",
@@ -60,6 +60,8 @@
     "@testing-library/react": "^14.0.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/debug": "^4.1.7",
+    "@types/mongoose": "^5.11.97",
+    "@types/supertest": "^2.0.12",
     "@types/text-encoding": "^0.0.36",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "babel-jest": "^29.5.0",
@@ -76,6 +78,7 @@
     "jest-environment-jsdom": "^29.5.0",
     "msw": "^1.2.1",
     "react-test-renderer": "^18.2.0",
+    "supertest": "^6.3.3",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1"
   }
