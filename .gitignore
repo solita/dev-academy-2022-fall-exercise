@@ -1,4 +1,6 @@
 public/*
+test_datasets/
+datasets/journeys/*.csv
 
 node_modules/
 .eslintcache
