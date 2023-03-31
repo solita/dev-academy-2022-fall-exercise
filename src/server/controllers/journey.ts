@@ -2,6 +2,7 @@ import path from "path"
 import { Journey_csv_data, Journey_data, Stored_journey_data } from "../../common"
 import { parse } from "csv-parse"
 import fs from "fs"
+import { createUnzip } from "zlib"
 import { csv_journey_schema } from "../models/journey"
 import Journey from "../models/journey"
 import { Request, Response } from "express"
@@ -11,8 +12,8 @@ import Joi from "joi"
 const debugLog = debug("app:journey_controller:log")
 const errorLog = debug("app:journey_controller:error")
 
-const datasets_path = path.join(__dirname, "../../../", "datasets", "journeys")
-const csv_files = fs.readdirSync(datasets_path)
+const datasets_path = path.join(__dirname, "../../../", "datasets")
+const journey_datasets_path = path.join(datasets_path, "journeys")
 
 //Clear all journeys from the database
 export async function clear_journeys() {
@@ -28,10 +29,11 @@ export async function clear_journeys() {
 //import all the csv files in the datasets folder to the database
 export async function import_journey_csv_to_database() {
   try {
+    const csv_files = fs.readdirSync(journey_datasets_path)
     //loop through all the csv files in the datasets folder
     for (const file of csv_files) {
       debugLog(`Importing ${file} to the database`)
-      const csv_file_path = path.join(datasets_path, file)
+      const csv_file_path = path.join(journey_datasets_path, file)
       await read_csv_journey_data(csv_file_path)
     }
     debugLog("All journey csv files imported to the database")

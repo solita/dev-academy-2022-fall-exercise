@@ -49,9 +49,12 @@
 * Ability to filter all the calculations per month
 
 ## Extra
-* Add test suite
+* ~~Add test suite~~
 * Endpoints to store new journeys data or new bicycle stations
 * ~~Running backend in Docker~~
 * Running backend in Cloud
 * Implement E2E tests
 * Create UI for adding journeys or bicycle stations
+
+## Bugs
+* App does not wait until all items are added to the database before setting csv_data_is_loaded to true

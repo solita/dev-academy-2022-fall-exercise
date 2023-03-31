@@ -41,7 +41,7 @@ app.use("/stations", station_router)
 async function start_database() {
   debugLog("Connecting to database")
 
-  await mongoose.connect("mongodb://mongo:27017")
+  await mongoose.connect(process.env.MONGO_URI || "mongodb://mongo:27017")
 
   try {
     debugLog("Initializing the database")
