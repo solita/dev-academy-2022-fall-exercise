@@ -34,6 +34,7 @@ export const csv_station_schema = Joi.object({
   Stad: Joi.string().required(),
   Operaattor: Joi.string().required(),
   Kapasiteet: Joi.string().required(),
-  x: Joi.string().required(),
-  y: Joi.string().required(),
+  //will accept strings that can be converted to numbers
+  x: Joi.number().required(),
+  y: Joi.number().required(),
 })

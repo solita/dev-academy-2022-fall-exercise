@@ -21,6 +21,6 @@ export const csv_journey_schema = Joi.object({
   "Departure station name": Joi.string().required(),
   "Return station id": Joi.string().required(),
   "Return station name": Joi.string().required(),
-  "Covered distance (m)": Joi.string().required(),
-  "Duration (sec.)": Joi.string().required(),
+  "Covered distance (m)": Joi.number().required(),
+  "Duration (sec.)": Joi.number().required(),
 })
