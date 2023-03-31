@@ -124,8 +124,11 @@ describe("Get Journeys Params", () => {
     expect(mock_response.status).toBeCalledWith(200)
 
     const journeys = mock_response.json.mock.calls[0][0].journeys 
+
     const first_journey = journeys[0]
+    expect(first_journey).toBeDefined()
     const second_journey = journeys[1]
+    expect(second_journey).toBeDefined()
     
     expect(first_journey.departure_station_name).toBe(dummy_journey_B.departure_station_name)
     expect(second_journey.departure_station_name).toBe(dummy_journey_A.departure_station_name)
@@ -160,7 +163,9 @@ describe("Get Journeys Params", () => {
     const journeys = mock_response.json.mock.calls[0][0].journeys 
 
     const first_journey = journeys[0]
+    expect(first_journey).toBeDefined()
     const second_journey = journeys[1]
+    expect(second_journey).toBeDefined()
     
     expect(first_journey.departure_station_name).toBe(dummy_journey_A.departure_station_name)
     expect(second_journey.departure_station_name).toBe(dummy_journey_B.departure_station_name)
