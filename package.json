@@ -5,8 +5,8 @@
   "scripts": {
     "type_check": "tsc --noEmit",
     "start": "DEBUG=app* ts-node ./bin/www",
-    "test": "jest NODE_ENV=test",
-    "backend_test": "jest --selectProjects backend NODE_ENV=test",
+    "test": "NODE_ENV=test jest",
+    "backend_test": "NODE_ENV=test jest --selectProjects backend",
     "frontend_test": "jest --selectProjects frontend",
     "dev_build": "NODE_ENV=development yarn webpack --config ./build/webpack/webpack.dev.js --mode development",
     "dev": "yarn dev_build && yarn start",
