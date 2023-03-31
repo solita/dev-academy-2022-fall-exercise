@@ -6,14 +6,11 @@
     "type_check": "tsc --noEmit",
     "get_datasets": "./build/scripts/extract_datasets.sh",
     "start": "yarn get_datasets && DEBUG=app* ts-node ./bin/www",
-
     "test": "NODE_ENV=test yarn get_datasets && jest",
     "backend_test": "NODE_ENV=test yarn get_datasets && jest --selectProjects backend",
     "frontend_test": "jest --selectProjects frontend",
-
     "dev_build": "NODE_ENV=development && yarn webpack --config ./build/webpack/webpack.dev.js --mode development",
     "dev": "yarn dev_build && yarn start",
-     
     "docker_stop": "docker-compose -f ./docker/docker-compose.yml stop",
     "docker_build": "docker-compose -f ./docker/docker-compose.yml build",
     "docker_start": "docker-compose -f ./docker/docker-compose.yml up -d",
@@ -50,7 +47,7 @@
     "react-dom": "^18.2.0",
     "style-loader": "^3.3.2",
     "ts-loader": "^9.4.2",
-    "typescript": "*",
+    "typescript": "4.9.5",
     "webpack": "^5.76.2",
     "webpack-cli": "^5.0.1"
   },
