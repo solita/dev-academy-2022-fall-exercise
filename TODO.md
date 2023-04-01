@@ -50,6 +50,7 @@
 
 ## Extra
 * ~~Add test suite~~
+* Document process of each section.
 * Endpoints to store new journeys data or new bicycle stations
 * ~~Running backend in Docker~~
 * Running backend in Cloud
