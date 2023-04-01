@@ -69,9 +69,22 @@ const Single_station_view: FC<Single_station_view_props> = ({
       <EuiFlexItem grow={true}>
         <EuiPanel>Graph 1</EuiPanel>
       </EuiFlexItem>
+
+      <EuiFlexItem grow={true}>
+        <EuiPanel>Graph 1</EuiPanel>
+      </EuiFlexItem>
     </EuiFlexGroup>
   )
 
+  const convert_distance_to_km = (distance: number) => {
+    if (distance < 1000) {
+      return `${distance} m`
+    } else {
+      return `${(distance / 1000).toFixed(2)} km`
+    }
+  }
+
+  //TODO Add trend data into chart
   const distance_chart = (
     <Chart>
       <Metric
@@ -80,16 +93,19 @@ const Single_station_view: FC<Single_station_view_props> = ({
           [
             {
               color: "#6ECCB1",
-              title: "Average covered distance",
-              subtitle: "of journeys started at this station",
+              icon: () => <EuiIcon type="arrowRight" />,
+              title: "Journeys started at this station",
               value: station_stats?.average_distance_started ?? 0,
-              valueFormatter: (covered_distance: number) => {
-                if (covered_distance < 1000) {
-                  return `${covered_distance} m`
-                } else {
-                  return `${(covered_distance / 1000).toFixed(2)} km`
-                }
-              },
+              valueFormatter: convert_distance_to_km,
+            },
+          ],
+          [
+            {
+              color: "#6ECCB1",
+              icon: () => <EuiIcon type="arrowLeft" />,
+              title: "Journeys ended at this station",
+              value: station_stats?.average_distance_ended ?? 0,
+              valueFormatter: convert_distance_to_km,
             },
           ],
         ]}
@@ -101,9 +117,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
     <EuiFlexGroup direction="column">
       <EuiFlexItem grow={false}>
         <EuiPanel>
-          <EuiTitle size="s">
-            <EuiText>Average Covered Distance</EuiText>
-          </EuiTitle>
+          <EuiText size="m">Average Covered Distance</EuiText>
         </EuiPanel>
       </EuiFlexItem>
 
