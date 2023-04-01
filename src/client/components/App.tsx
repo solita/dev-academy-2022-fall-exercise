@@ -25,12 +25,8 @@ const App: FC = () => {
       name: "Stations",
       content: <Station_view />,
     },
-    {
-      id: "single-station-view",
-      name: "Single Station",
-      content: <Single_station_view />,
-    },
   ]
+
   return (
     <EuiProvider colorMode="dark">
       <EuiPage data-testid="app">

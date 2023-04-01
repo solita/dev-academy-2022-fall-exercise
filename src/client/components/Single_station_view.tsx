@@ -1,9 +1,12 @@
 import {
   EuiFlexGroup,
   EuiFlexItem,
+  EuiIcon,
   EuiModal,
   EuiModalBody,
   EuiPanel,
+  EuiSkeletonText,
+  EuiSkeletonTitle,
   EuiText,
   EuiTitle,
 } from "@elastic/eui"
@@ -12,19 +15,30 @@ import React, { FC, useEffect, useState } from "react"
 import { Stored_station_data } from "src/common"
 
 interface Single_station_view_props {
-  station_id: string
+  station_doc_id: string
+  on_close: () => void
 }
 
-const Single_station_view: FC<Single_station_view_props> = ({ station_id }) => {
-  const [station, set_station] = useState<Stored_station_data | undefined>(undefined)
+const Single_station_view: FC<Single_station_view_props> = ({
+  station_doc_id,
+  on_close,
+}) => {
+  const [station, set_station] = useState<Stored_station_data>()
 
   const get_station = async () => {
-    const response = await axios.get<Stored_station_data>("/stations/" + station_id)
-    set_station(response.data)
+    try {
+      const response = await axios.get<Stored_station_data>(
+        `/stations/${station_doc_id}`
+      )
+
+      set_station(response.data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
-    get_station
+    get_station()
   }, [])
 
   const graph_column = (
@@ -63,14 +77,42 @@ const Single_station_view: FC<Single_station_view_props> = ({ station_id }) => {
     </EuiFlexGroup>
   )
 
+  const station_name = station?.nimi ?? <EuiSkeletonTitle />
+  const station_address = station?.osoite ?? <EuiSkeletonText lines={1} />
+  const title_and_address = (
+    <EuiPanel>
+      <EuiTitle size="l">
+        <EuiText>{station_name}</EuiText>
+      </EuiTitle>
+      <EuiTitle size="s">
+        <EuiFlexGroup direction="row" gutterSize="xs" alignItems="center">
+          <EuiFlexItem grow={false}>
+            <EuiIcon type="visMapCoordinate" />
+          </EuiFlexItem>
+          <EuiFlexItem grow={true}>
+            <EuiText size="m">{station_address}</EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiTitle>
+    </EuiPanel>
+  )
+
+  const station_total_stats = (
+    <EuiTitle>
+      <>
+        <EuiText size="s">{`Journeys started: ${2}`}</EuiText>
+        <EuiText size="s">{`Journeys ended: ${2}`}</EuiText>
+      </>
+    </EuiTitle>
+  )
+
   const information_section = (
     <EuiFlexGroup direction="column" style={{ height: "100%" }}>
       <EuiFlexItem grow={false}>
-        <EuiPanel>
-          <EuiTitle>
-            <EuiText>Station Name</EuiText>
-          </EuiTitle>
-        </EuiPanel>
+        <EuiFlexGroup direction="row">
+          <EuiFlexItem grow={false}>{title_and_address}</EuiFlexItem>
+          <EuiFlexItem grow={true}>{station_total_stats}</EuiFlexItem>
+        </EuiFlexGroup>
       </EuiFlexItem>
 
       <EuiFlexItem grow={true}>
@@ -88,11 +130,10 @@ const Single_station_view: FC<Single_station_view_props> = ({ station_id }) => {
       ></img>
     </EuiPanel>
   )
-  const [show, set_show] = useState(true)
 
-  const station_modal = (
+  return (
     <EuiModal
-      onClose={() => set_show(false)}
+      onClose={on_close}
       style={{
         maxWidth: "90vw",
         width: "89vw",
@@ -106,12 +147,6 @@ const Single_station_view: FC<Single_station_view_props> = ({ station_id }) => {
       </EuiModalBody>
     </EuiModal>
   )
-
-  if (show) {
-    return station_modal
-  } else {
-    return <div></div>
-  }
 }
 
 export default Single_station_view

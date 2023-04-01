@@ -187,9 +187,9 @@ export async function get_stations(
     })
   }
 }
-export const get_station = async (req: Request<{ id: string }>, res: Response) => {
+export const get_station = async (req: Request<{ _id: string }>, res: Response) => {
   try {
-    const station = await Station.findById(req.params.id)
+    const station = await Station.findById(req.params._id)
     if (!station) {
       return res.status(404).json({
         message: "Station not found",

@@ -35,8 +35,8 @@
 ### Single station view
 
 #### Recommended
-* Station name
-* Station address
+* ~~Station name~~
+* ~~Station address~~
 * Total number of journeys starting from the station
 * Total number of journeys ending at the station
 

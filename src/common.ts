@@ -1,5 +1,3 @@
-import { Document } from "mongoose"
-
 export interface Journey_csv_data {
   Departure: string
   Return: string
@@ -22,7 +20,9 @@ export interface Journey_data {
   duration: number
 }
 
-export interface Stored_journey_data extends Document<any,any, Journey_data> {}
+export interface Stored_journey_data extends Journey_data {
+  _id: string;
+}
 
 export interface Station_csv_data {
   FID: string
@@ -56,4 +56,6 @@ export interface Station_data {
   y: number
 }
 
-export interface Stored_station_data extends Document<any, any, Station_data> {}
+export interface Stored_station_data extends Station_data {
+  _id: string;
+}

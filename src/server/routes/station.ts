@@ -7,6 +7,6 @@ const router = express.Router()
 //Get all stations
 router.get("/", get_stations)
 
-router.get("/:id", get_station)
+router.get("/:_id", get_station)
 
 export default router
