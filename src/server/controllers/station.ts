@@ -3,8 +3,14 @@ import { parse } from "csv-parse"
 import fs from "fs"
 import { csv_station_schema } from "../models/station"
 import Station from "../models/station"
+import Journey from "../models/journey"
 import { csv_data_is_loaded } from "./config"
-import { Station_csv_data, Station_data, Stored_station_data } from "../../common"
+import {
+  Station_csv_data,
+  Station_data,
+  Stored_journey_data,
+  Stored_station_data,
+} from "../../common"
 import { Request, Response } from "express"
 
 import debug from "debug"
@@ -187,6 +193,7 @@ export async function get_stations(
     })
   }
 }
+
 export const get_station = async (req: Request<{ _id: string }>, res: Response) => {
   try {
     const station = await Station.findById(req.params._id)
@@ -202,4 +209,87 @@ export const get_station = async (req: Request<{ _id: string }>, res: Response) 
       message: "Failed to get station",
     })
   }
+}
+
+export interface Station_stats {
+  //Total number of journeys starting from the station
+  total_journeys_started: number
+  //Total number of journeys ending at the station
+  total_journeys_ended: number
+  // //The average distance of a journey starting from the station
+  average_duration_started: number
+  // //The average distance of a journey ending at the station
+  average_duration_ended: number
+  // //Top 5 most popular return stations for journeys starting from the station
+  // top_5_return_stations: Stored_journey_data[]
+  // //Top 5 most popular departure stations for journeys ending at the station
+  // top_5_departure_stations: Stored_journey_data[]
+}
+
+export const get_station_stats = async (
+  req: Request<{ _id: string }>,
+  res: Response
+) => {
+  const { _id } = req.params
+  const station = await Station.findById(_id)
+  if (!station || !station.station_id) {
+    return res.status(404).json({
+      message: "Station not found",
+    })
+  }
+
+  const total_journeys_started = await Journey.countDocuments({
+    departure_station_id: station.station_id,
+  })
+  const total_journeys_ended = await Journey.countDocuments({
+    return_station_id: station.station_id,
+  })
+
+  type Average_distance = { average_distance: number }
+
+  const average_distance_started: Average_distance[] = await get_average_distance_started(
+    station.station_id
+  )
+  const average_distance_ended: Average_distance[] = await get_average_distance_ended(station.station_id)
+
+  return res.status(200).json({
+    total_journeys_started,
+    total_journeys_ended,
+    average_duration_started: average_distance_started[0]?.average_distance ?? 0,
+    average_duration_ended: average_distance_ended[0]?.average_distance ?? 0,
+  })
+}
+
+//The average distance of a journey starting from the station
+export const get_average_distance_started = async (station_id: string) => {
+  return Journey.aggregate([
+    {
+      $match: {
+        departure_station_id: station_id,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        average_distance: { $avg: "$covered_distance" },
+      },
+    },
+  ])
+}
+
+//The average distance of a journey ending at the station
+export const get_average_distance_ended = async (station_id: string) => {
+  return Journey.aggregate([
+    {
+      $match: {
+        return_station_id: station_id,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        average_distance: { $avg: "$covered_distance" },
+      },
+    },
+  ])
 }

@@ -50,6 +50,7 @@
 
 ## Extra
 * ~~Add test suite~~
+* Set config collection to have a boolean check for both csv data types
 * Document process of each section.
 * Endpoints to store new journeys data or new bicycle stations
 * ~~Running backend in Docker~~
