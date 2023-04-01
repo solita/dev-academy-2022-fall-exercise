@@ -7,9 +7,26 @@ import {
   EuiText,
   EuiTitle,
 } from "@elastic/eui"
-import React, { FC, useState } from "react"
+import axios from "axios"
+import React, { FC, useEffect, useState } from "react"
+import { Stored_station_data } from "src/common"
 
-const Single_station_view: FC = () => {
+interface Single_station_view_props {
+  station_id: string
+}
+
+const Single_station_view: FC<Single_station_view_props> = ({ station_id }) => {
+  const [station, set_station] = useState<Stored_station_data | undefined>(undefined)
+
+  const get_station = async () => {
+    const response = await axios.get<Stored_station_data>("/stations/" + station_id)
+    set_station(response.data)
+  }
+
+  useEffect(() => {
+    get_station
+  }, [])
+
   const graph_column = (
     <EuiFlexGroup direction="column">
       <EuiFlexItem grow={false}>

@@ -1,10 +1,12 @@
 //Using import syntax instead of require syntax to get typings
 import express from "express";
-import { get_stations } from "../controllers/station";
+import { get_station, get_stations } from "../controllers/station";
 
 const router = express.Router()
 
-//Get all journeys
+//Get all stations
 router.get("/", get_stations)
+
+router.get("/:id", get_station)
 
 export default router

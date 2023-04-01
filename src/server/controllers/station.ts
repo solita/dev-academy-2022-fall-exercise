@@ -187,3 +187,19 @@ export async function get_stations(
     })
   }
 }
+export const get_station = async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const station = await Station.findById(req.params.id)
+    if (!station) {
+      return res.status(404).json({
+        message: "Station not found",
+      })
+    }
+    res.status(200).json(station)
+  } catch (error) {
+    errorLog("Failed to get station :", error)
+    res.status(500).json({
+      message: "Failed to get station",
+    })
+  }
+}
