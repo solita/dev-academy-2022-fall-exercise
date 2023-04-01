@@ -18,6 +18,7 @@
     "docker": "yarn type_check && yarn dev_build && yarn docker_build && yarn docker_restart"
   },
   "dependencies": {
+    "@elastic/charts": "^55.0.0",
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^76.2.0",
     "@emotion/css": "^11.10.6",
@@ -40,6 +41,7 @@
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.7.5",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "mongoose": "^7.0.2",
     "morgan": "~1.9.1",
     "prop-types": "^15.8.1",

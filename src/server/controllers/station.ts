@@ -217,9 +217,9 @@ export interface Station_stats {
   //Total number of journeys ending at the station
   total_journeys_ended: number
   // //The average distance of a journey starting from the station
-  average_duration_started: number
+  average_distance_started: number
   // //The average distance of a journey ending at the station
-  average_duration_ended: number
+  average_distance_ended: number
   // //Top 5 most popular return stations for journeys starting from the station
   // top_5_return_stations: Stored_journey_data[]
   // //Top 5 most popular departure stations for journeys ending at the station
@@ -255,8 +255,8 @@ export const get_station_stats = async (
   return res.status(200).json({
     total_journeys_started,
     total_journeys_ended,
-    average_duration_started: average_distance_started[0]?.average_distance ?? 0,
-    average_duration_ended: average_distance_ended[0]?.average_distance ?? 0,
+    average_distance_started: average_distance_started[0]?.average_distance ?? 0,
+    average_distance_ended: average_distance_ended[0]?.average_distance ?? 0,
   })
 }
 

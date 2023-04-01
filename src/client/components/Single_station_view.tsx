@@ -1,3 +1,4 @@
+import { Chart, Metric } from "@elastic/charts"
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -68,9 +69,46 @@ const Single_station_view: FC<Single_station_view_props> = ({
       <EuiFlexItem grow={true}>
         <EuiPanel>Graph 1</EuiPanel>
       </EuiFlexItem>
+    </EuiFlexGroup>
+  )
+
+  const distance_chart = (
+    <Chart>
+      <Metric
+        id="metricId"
+        data={[
+          [
+            {
+              color: "#6ECCB1",
+              title: "Average covered distance",
+              subtitle: "of journeys started at this station",
+              value: station_stats?.average_distance_started ?? 0,
+              valueFormatter: (covered_distance: number) => {
+                if (covered_distance < 1000) {
+                  return `${covered_distance} m`
+                } else {
+                  return `${(covered_distance / 1000).toFixed(2)} km`
+                }
+              },
+            },
+          ],
+        ]}
+      />
+    </Chart>
+  )
+
+  const Distance_stat_column = (
+    <EuiFlexGroup direction="column">
+      <EuiFlexItem grow={false}>
+        <EuiPanel>
+          <EuiTitle size="s">
+            <EuiText>Average Covered Distance</EuiText>
+          </EuiTitle>
+        </EuiPanel>
+      </EuiFlexItem>
 
       <EuiFlexItem grow={true}>
-        <EuiPanel>Graph 2</EuiPanel>
+        <EuiPanel>{distance_chart}</EuiPanel>
       </EuiFlexItem>
     </EuiFlexGroup>
   )
@@ -78,7 +116,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
   const graph_columns = (
     <EuiFlexGroup direction="row" style={{ height: "100%" }}>
       <EuiFlexItem grow={false} style={{ width: "100%" }}>
-        {graph_column}
+        {Distance_stat_column}
       </EuiFlexItem>
 
       <EuiFlexItem grow={false} style={{ width: "100%" }}>

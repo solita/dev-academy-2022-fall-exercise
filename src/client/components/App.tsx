@@ -1,6 +1,7 @@
 import React from "react"
 import { FC } from "react"
 import "@elastic/eui/dist/eui_theme_dark.css"
+import '@elastic/charts/dist/theme_dark.css';
 
 import {
   EuiPage,
@@ -11,7 +12,6 @@ import {
 } from "@elastic/eui"
 import Journey_view from "./Journey_view"
 import Station_view from "./Station_view"
-import Single_station_view from "./Single_station_view"
 
 const App: FC = () => {
   const tabs = [
