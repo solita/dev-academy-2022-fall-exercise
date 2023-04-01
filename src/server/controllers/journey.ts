@@ -1,7 +1,8 @@
-import path, { resolve } from "path"
+import path from "path"
 import { Journey_csv_data, Journey_data, Stored_journey_data } from "../../common"
 import { parse } from "csv-parse"
 import fs from "fs"
+import { createUnzip } from "zlib"
 import { csv_journey_schema } from "../models/journey"
 import Journey from "../models/journey"
 import { Request, Response } from "express"
@@ -11,8 +12,8 @@ import Joi from "joi"
 const debugLog = debug("app:journey_controller:log")
 const errorLog = debug("app:journey_controller:error")
 
-const datasets_path = path.join(__dirname, "../../../", "datasets", "journeys")
-const csv_files = fs.readdirSync(datasets_path)
+const datasets_path = path.join(__dirname, "../../../", "datasets")
+const journey_datasets_path = path.join(datasets_path, "journeys")
 
 //Clear all journeys from the database
 export async function clear_journeys() {
@@ -28,10 +29,11 @@ export async function clear_journeys() {
 //import all the csv files in the datasets folder to the database
 export async function import_journey_csv_to_database() {
   try {
+    const csv_files = fs.readdirSync(journey_datasets_path)
     //loop through all the csv files in the datasets folder
     for (const file of csv_files) {
       debugLog(`Importing ${file} to the database`)
-      const csv_file_path = path.join(datasets_path, file)
+      const csv_file_path = path.join(journey_datasets_path, file)
       await read_csv_journey_data(csv_file_path)
     }
     debugLog("All journey csv files imported to the database")
@@ -41,7 +43,7 @@ export async function import_journey_csv_to_database() {
   }
 }
 
-function read_csv_journey_data(filePath: string): Promise<void> {
+export function read_csv_journey_data(filePath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     //BOM is a byte order mark, which is a special character that is used to indicate the endianness of a file.
     //This is needed to ensure that the parser can read the file correctly.
@@ -111,9 +113,9 @@ function read_csv_journey_data(filePath: string): Promise<void> {
   })
 }
 
-async function save_journey_data(data: Journey_data) {
+export async function save_journey_data(data: Journey_data) {
   const new_journey = new Journey(data)
-  await new_journey.save()
+  return new_journey.save()
 }
 
 export interface Journey_query_result {
@@ -123,10 +125,18 @@ export interface Journey_query_result {
 }
 
 const get_journeys_params_schema = Joi.object({
+  //Joi will accept a string that can be converted to a number
   page: Joi.number().min(0).required(),
   limit: Joi.number().min(1).required(),
-  order: Joi.string().allow("asc", "desc").required(),
-  sort: Joi.string().optional().required(),
+  order: Joi.string().valid("asc", "desc").required(),
+  sort: Joi.string()
+    .valid(
+      "departure_station_name",
+      "return_station_name",
+      "covered_distance",
+      "duration"
+    )
+    .required(),
 })
 
 export interface Get_journeys_query_params {

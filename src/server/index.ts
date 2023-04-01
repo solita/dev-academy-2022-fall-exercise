@@ -36,9 +36,12 @@ app.use("/journeys", journey_router)
 app.use("/stations", station_router)
 
 //Initialize the database and import csv data if it has not been imported yet.
+//The datasets will be saved within the repo to ensure that the app will always have data to work with.
+//Incase the HSL server is down or the data is not available, the app will still work.`
 async function start_database() {
   debugLog("Connecting to database")
-  await mongoose.connect("mongodb://mongo:27017")
+
+  await mongoose.connect(process.env.MONGO_URI || "mongodb://mongo:27017")
 
   try {
     debugLog("Initializing the database")
@@ -59,6 +62,11 @@ async function start_database() {
     errorLog(error)
   }
 }
-start_database()
+
+if (process.env.NODE_ENV === "test") {
+  debugLog("Running in test mode, prevent app from connecting to database")
+} else {
+  start_database()
+}
 
 module.exports = app

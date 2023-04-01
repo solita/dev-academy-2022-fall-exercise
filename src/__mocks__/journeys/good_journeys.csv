@@ -1,0 +1,4 @@
+Departure,Return,Departure station id,Departure station name,Return station id,Return station name,Covered distance (m),Duration (sec.)
+2021-05-31T23:57:25,2021-06-01T00:05:46,1,departure_station_A,2,return_station_A,1000,1000
+2021-05-31T23:57:25,2021-06-01T00:05:46,2,departure_station_B,3,return_station_B,0,1000
+2021-05-31T23:57:25,2021-06-01T00:05:46,3,departure_station_C,4,return_station_C,1000,0

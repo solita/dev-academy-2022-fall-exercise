@@ -1,0 +1,6 @@
+Departure,Return,Departure station id,Departure station name,Return station id,Return station name,Covered distance (m),Duration (sec.)
+2021-05-31T23:57:25,2021-06-01T00:05:46,094,Laajalahden aukio,100,Teljäntie,2043,500,error,error
+2021-05-31T23:57:25,Laajalahden aukio,100,Teljäntie,2043,500,error,error
+error line
+2021-05-31T23:57:25,2021-06-01T00:05:46,094,Laajalahden aukio,Teljäntie,2043,500
+2021-05-31T23:57:25,2021-06-01T00:05:46,1,departure_station_A,2,return_station_A,abc,abc
