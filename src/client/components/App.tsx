@@ -11,6 +11,7 @@ import {
 } from "@elastic/eui"
 import Journey_view from "./Journey_view"
 import Station_view from "./Station_view"
+import Single_station_view from "./Single_station_view"
 
 const App: FC = () => {
   const tabs = [
@@ -23,6 +24,11 @@ const App: FC = () => {
       id: "station-view",
       name: "Stations",
       content: <Station_view />,
+    },
+    {
+      id: "single-station-view",
+      name: "Single Station",
+      content: <Single_station_view />,
     },
   ]
   return (
