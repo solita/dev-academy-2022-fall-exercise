@@ -220,10 +220,10 @@ export interface Station_stats {
   average_distance_started: number
   // //The average distance of a journey ending at the station
   average_distance_ended: number
-  // //Top 5 most popular return stations for journeys starting from the station
-  // top_5_return_stations: Stored_journey_data[]
-  // //Top 5 most popular departure stations for journeys ending at the station
-  // top_5_departure_stations: Stored_journey_data[]
+  //Top 5 most popular return stations for journeys starting from the station
+  top_5_return_stations: Stored_station_data[]
+  //Top 5 most popular departure stations for journeys ending at the station
+  top_5_departure_stations: Stored_station_data[]
 }
 
 export const get_station_stats = async (
@@ -245,27 +245,119 @@ export const get_station_stats = async (
     return_station_id: station.station_id,
   })
 
-  type Average_distance = { average_distance: number }
-
-  const average_distance_started: Average_distance[] = await get_average_distance_started(
+  const average_distance_started = await get_average_distance_started(
     station.station_id
   )
-  const average_distance_ended: Average_distance[] = await get_average_distance_ended(station.station_id)
+  const average_distance_ended = await get_average_distance_ended(station.station_id)
 
-  return res.status(200).json({
+  const top_5_return_stations = await get_top_5_return_stations(station.station_id)
+  const top_5_departure_stations = await get_top_5_departure_stations(
+    station.station_id
+  )
+
+  const response_data: Station_stats = {
     total_journeys_started,
     total_journeys_ended,
     average_distance_started: average_distance_started[0]?.average_distance ?? 0,
     average_distance_ended: average_distance_ended[0]?.average_distance ?? 0,
-  })
+    top_5_return_stations: top_5_return_stations.map(
+      (station) => station.station_data[0]
+    ),
+    top_5_departure_stations: top_5_departure_stations.map(
+      (station) => station.station_data[0]
+    ),
+  }
+
+  return res.status(200).json(response_data)
+}
+
+export interface top_stations {
+  _id: string
+  count: number
+  station_data: Stored_station_data[]
+}
+
+//Top 5 most popular return stations for journeys starting from the station
+export const get_top_5_return_stations = async (station_doc_id: string) => {
+  debugLog("Getting top 5 return stations for station :", station_doc_id)
+  return Journey.aggregate<top_stations>([
+    {
+      //Find all stations that have the same departure station id as the given station id
+      $match: {
+        departure_station_id: station_doc_id,
+      },
+    },
+    {
+      //Group journeys by their return station id and get a count
+      $group: {
+        _id: "$return_station_id",
+        count: { $sum: 1 },
+      },
+    },
+    {
+      //Sort that group by the count in descending order
+      $sort: {
+        count: -1,
+      },
+    },
+    {
+      //The Journeys with the highest count will be at the top of the array
+      $limit: 5,
+    },
+    {
+      //Get the return station data for each of the top 5 return stations
+      $lookup: {
+        from: "stations",
+        localField: "_id",
+        foreignField: "station_id",
+        as: "station_data",
+      },
+    },
+  ])
+}
+
+//Top 5 most popular departure stations for journeys ending at the station
+export const get_top_5_departure_stations = async (station_doc_id: string) => {
+  debugLog("Getting top 5 departure stations for station :", station_doc_id)
+  return Journey.aggregate<top_stations>([
+    {
+      $match: {
+        return_station_id: station_doc_id,
+      },
+    },
+    {
+      $group: {
+        _id: "$departure_station_id",
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: {
+        count: -1,
+      },
+    },
+    {
+      $limit: 5,
+    },
+    {
+      $lookup: {
+        from: "stations",
+        localField: "_id",
+        foreignField: "station_id",
+        as: "station_data",
+      },
+    },
+  ])
 }
 
 //The average distance of a journey starting from the station
-export const get_average_distance_started = async (station_id: string) => {
-  return Journey.aggregate([
+type average_distance = { average_distance: number }
+export const get_average_distance_started = async (station_doc_id: string) => {
+  debugLog("Getting average distance started for station :", station_doc_id)
+  return Journey.aggregate<average_distance>([
     {
       $match: {
-        departure_station_id: station_id,
+        departure_station_id: station_doc_id,
       },
     },
     {
@@ -278,11 +370,12 @@ export const get_average_distance_started = async (station_id: string) => {
 }
 
 //The average distance of a journey ending at the station
-export const get_average_distance_ended = async (station_id: string) => {
-  return Journey.aggregate([
+export const get_average_distance_ended = async (station_doc_id: string) => {
+  debugLog("Getting average distance ended for station :", station_doc_id)
+  return Journey.aggregate<average_distance>([
     {
       $match: {
-        return_station_id: station_id,
+        return_station_id: station_doc_id,
       },
     },
     {

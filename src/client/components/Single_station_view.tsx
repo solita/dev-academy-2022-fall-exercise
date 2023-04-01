@@ -3,16 +3,19 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
+  EuiListGroup,
+  EuiListGroupItem,
   EuiModal,
   EuiModalBody,
   EuiPanel,
   EuiSkeletonText,
   EuiSkeletonTitle,
+  EuiSpacer,
   EuiText,
   EuiTitle,
 } from "@elastic/eui"
 import axios from "axios"
-import React, { FC, useEffect, useState } from "react"
+import React, { CSSProperties, FC, useEffect, useState } from "react"
 import { Stored_station_data } from "../../../src/common"
 import { Station_stats } from "../../../src/server/controllers/station"
 
@@ -56,26 +59,6 @@ const Single_station_view: FC<Single_station_view_props> = ({
     get_station_stats()
   }, [])
 
-  const graph_column = (
-    <EuiFlexGroup direction="column">
-      <EuiFlexItem grow={false}>
-        <EuiPanel>
-          <EuiTitle>
-            <EuiText>Graph Title</EuiText>
-          </EuiTitle>
-        </EuiPanel>
-      </EuiFlexItem>
-
-      <EuiFlexItem grow={true}>
-        <EuiPanel>Graph 1</EuiPanel>
-      </EuiFlexItem>
-
-      <EuiFlexItem grow={true}>
-        <EuiPanel>Graph 1</EuiPanel>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  )
-
   const convert_distance_to_km = (distance: number) => {
     if (distance < 1000) {
       return `${distance} m`
@@ -113,11 +96,11 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </Chart>
   )
 
-  const Distance_stat_column = (
+  const distance_stat_column = (
     <EuiFlexGroup direction="column">
       <EuiFlexItem grow={false}>
         <EuiPanel>
-          <EuiText size="m">Average Covered Distance</EuiText>
+          <EuiText>Average Covered Distance</EuiText>
         </EuiPanel>
       </EuiFlexItem>
 
@@ -127,18 +110,60 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
+  const popular_return_station_chart = (
+    <>
+      <EuiTitle size="s">
+        <h2>Staring from here</h2>
+      </EuiTitle>
+      <EuiSpacer size="s" />
+      <EuiListGroup flush={true} bordered={true}>
+        {station_stats?.top_5_return_stations.map((station, index) => (
+          <EuiListGroupItem label={`${index + 1}. ${station.nimi}`} />
+        ))}
+      </EuiListGroup>
+    </>
+  )
+
+  const popular_departure_station_chart = (
+    <>
+      <EuiTitle size="s">
+        <h2>Ending from here</h2>
+      </EuiTitle>
+      <EuiSpacer size="s" />
+      <EuiListGroup flush={true} bordered={true} title="Ending from here">
+        {station_stats?.top_5_departure_stations.map((station, index) => (
+          <EuiListGroupItem label={`${index + 1}. ${station.nimi}`} />
+        ))}
+      </EuiListGroup>
+    </>
+  )
+
+  const popular_stat_column = (
+    <EuiFlexGroup direction="column">
+      <EuiFlexItem grow={false}>
+        <EuiPanel>
+          <EuiText>Top Popular stations</EuiText>
+        </EuiPanel>
+      </EuiFlexItem>
+
+      <EuiFlexItem grow={true}>
+        <EuiPanel>{popular_return_station_chart}</EuiPanel>
+      </EuiFlexItem>
+
+      <EuiFlexItem grow={true}>
+        <EuiPanel>{popular_departure_station_chart}</EuiPanel>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  )
+
   const graph_columns = (
     <EuiFlexGroup direction="row" style={{ height: "100%" }}>
       <EuiFlexItem grow={false} style={{ width: "100%" }}>
-        {Distance_stat_column}
+        {distance_stat_column}
       </EuiFlexItem>
 
       <EuiFlexItem grow={false} style={{ width: "100%" }}>
-        {graph_column}
-      </EuiFlexItem>
-
-      <EuiFlexItem grow={false} style={{ width: "100%" }}>
-        {graph_column}
+        {popular_stat_column}
       </EuiFlexItem>
     </EuiFlexGroup>
   )
@@ -152,7 +177,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
       </EuiTitle>
 
       <EuiTitle size="s">
-        <EuiFlexGroup direction="row" gutterSize="xs" alignItems="center">
+        <EuiFlexGroup direction="row" gutterSize="xs" alignItems="baseline">
           <EuiFlexItem grow={false}>
             <EuiIcon type="visMapCoordinate" />
           </EuiFlexItem>
@@ -223,14 +248,20 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiPanel>
   )
 
+  const modal_style: CSSProperties = {
+    maxWidth: "90vw",
+    width: "89vw",
+    height: "89vh",
+    maxHeight: "90vh",
+    //This will ensure that the modal displays in the center of the screen
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+  }
+
   return (
-    <EuiModal
-      onClose={on_close}
-      style={{
-        maxWidth: "90vw",
-        width: "89vw",
-      }}
-    >
+    <EuiModal onClose={on_close} style={modal_style}>
       <EuiModalBody>
         <EuiFlexGroup style={{ height: "100%" }}>
           <EuiFlexItem grow={true}>{information_section}</EuiFlexItem>
