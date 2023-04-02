@@ -39,13 +39,13 @@ module.exports = {
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "../../public", "dist"),
-    publicPath: "/dist",
   },
   plugins: [
     //Will automatically attach the bundle to the index.html
     new HtmlWebpackPlugin({
       title: "Helsinki City Bike",
-      filename: "../index.html",
+      outputPath: "../",
+      filename: "index.html",
       template: "./src/client/assets/index.html",
     }),
     new MiniCssExtractPlugin({

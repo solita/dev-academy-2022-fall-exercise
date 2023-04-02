@@ -49,6 +49,7 @@
 * Ability to filter all the calculations per month
 
 ## Extra
+* Add credentials to the database
 * CI/CD Automate release to public server
 * ~~Add test suite~~
 * Set config collection to have a boolean check for both csv data types

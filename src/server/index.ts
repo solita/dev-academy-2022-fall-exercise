@@ -30,6 +30,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, "../../", "public")))
+app.use(express.static(path.join(__dirname, "../../", "public" , "dist")))
 
 app.use("/", app_router)
 app.use("/journeys", journey_router)
