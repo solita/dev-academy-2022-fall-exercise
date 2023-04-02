@@ -44,8 +44,9 @@ const Single_station_view: FC<Single_station_view_props> = ({
   const [station, set_station] = useState<Stored_station_data>()
   const [station_stats, set_station_stats] = useState<Station_stats>()
 
-  const [start_date, set_start_date] = useState(moment())
-  const [end_date, set_end_date] = useState(moment().add(1, "month"))
+  //Assuming the dataset only goes back 10 years or less
+  const [start_date, set_start_date] = useState(moment().subtract(10, "years"))
+  const [end_date, set_end_date] = useState(moment())
 
   const get_station = async () => {
     try {
@@ -65,8 +66,8 @@ const Single_station_view: FC<Single_station_view_props> = ({
         `/stations/${station_doc_id}/stats`,
         {
           params: {
-            start_date: start_date.format("YYYY-MM-DD"),
-            end_date: end_date.format("YYYY-MM-DD"),
+            start_date: start_date.toISOString(),
+            end_date: end_date.toISOString(),
           },
         }
       )
@@ -276,9 +277,9 @@ const Single_station_view: FC<Single_station_view_props> = ({
           selected={start_date}
           onChange={(date) => date && set_start_date(date)}
           startDate={start_date}
+          maxDate={end_date}
           endDate={end_date}
           aria-label="Start date"
-          showTimeSelect
         />
       }
       endDateControl={
@@ -286,9 +287,9 @@ const Single_station_view: FC<Single_station_view_props> = ({
           selected={end_date}
           onChange={(date) => date && set_end_date(date)}
           startDate={start_date}
+          maxDate={moment()}
           endDate={end_date}
           aria-label="End date"
-          showTimeSelect
         />
       }
     />
