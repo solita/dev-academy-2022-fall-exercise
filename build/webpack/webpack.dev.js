@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 module.exports = {
   entry: "./src/client/index.tsx",
   mode: "development",
-  devtool: 'inline-source-map',
+  devtool: "inline-source-map",
   module: {
     rules: [
       {
@@ -22,6 +22,15 @@ module.exports = {
           "css-loader",
         ],
       },
+      {
+        //Ensure leaflet images are loaded bu adding them to the root level of the public folder
+        test: /\.png$/,
+        loader: "file-loader",
+        options: {
+          outputPath: "../",
+          name: "[name].[ext]",
+        },
+      },
     ],
   },
   resolve: {
@@ -30,6 +39,7 @@ module.exports = {
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "../../public", "dist"),
+    publicPath: "/dist",
   },
   plugins: [
     //Will automatically attach the bundle to the index.html

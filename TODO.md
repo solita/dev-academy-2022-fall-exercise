@@ -41,7 +41,7 @@
 * ~~Total number of journeys ending at the station~~
 
 #### Additional
-* Station location on the map
+* ~~Station location on the map~~
 * ~~The average distance of a journey starting from the station~~
 * ~~The average distance of a journey ending at the station~~
 * ~~Top 5 most popular return stations for journeys starting from the station~~
@@ -49,6 +49,7 @@
 * Ability to filter all the calculations per month
 
 ## Extra
+* CI/CD Automate release to public server
 * ~~Add test suite~~
 * Set config collection to have a boolean check for both csv data types
 * Document process of each section.
