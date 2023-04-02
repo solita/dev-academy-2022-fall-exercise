@@ -1,5 +1,7 @@
 import { Chart, Metric } from "@elastic/charts"
 import {
+  EuiDatePicker,
+  EuiDatePickerRange,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
@@ -28,6 +30,7 @@ import "leaflet/dist/images/layers.png"
 import "leaflet/dist/images/layers-2x.png"
 
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
+import moment from "moment"
 
 interface Single_station_view_props {
   station_doc_id: string
@@ -40,6 +43,9 @@ const Single_station_view: FC<Single_station_view_props> = ({
 }) => {
   const [station, set_station] = useState<Stored_station_data>()
   const [station_stats, set_station_stats] = useState<Station_stats>()
+
+  const [start_date, set_start_date] = useState(moment())
+  const [end_date, set_end_date] = useState(moment().add(1, "month"))
 
   const get_station = async () => {
     try {
@@ -56,13 +62,23 @@ const Single_station_view: FC<Single_station_view_props> = ({
   const get_station_stats = async () => {
     try {
       const response = await axios.get<Station_stats>(
-        `/stations/${station_doc_id}/stats`
+        `/stations/${station_doc_id}/stats`,
+        {
+          params: {
+            start_date: start_date.format("YYYY-MM-DD"),
+            end_date: end_date.format("YYYY-MM-DD"),
+          },
+        }
       )
       set_station_stats(response.data)
     } catch (error) {
       console.log(error)
     }
   }
+
+  useEffect(() => {
+    get_station_stats()
+  }, [start_date, end_date])
 
   useEffect(() => {
     get_station()
@@ -252,6 +268,32 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiTitle>
   )
 
+  const date_picker = (
+    <EuiDatePickerRange
+      isInvalid={start_date > end_date}
+      startDateControl={
+        <EuiDatePicker
+          selected={start_date}
+          onChange={(date) => date && set_start_date(date)}
+          startDate={start_date}
+          endDate={end_date}
+          aria-label="Start date"
+          showTimeSelect
+        />
+      }
+      endDateControl={
+        <EuiDatePicker
+          selected={end_date}
+          onChange={(date) => date && set_end_date(date)}
+          startDate={start_date}
+          endDate={end_date}
+          aria-label="End date"
+          showTimeSelect
+        />
+      }
+    />
+  )
+
   const information_section = (
     <EuiFlexGroup direction="column" style={{ height: "100%" }}>
       <EuiFlexItem grow={false}>
@@ -261,6 +303,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
               {title_and_address}
             </EuiFlexItem>
             <EuiFlexItem grow={true}>{station_total_stats}</EuiFlexItem>
+            <EuiFlexItem grow={false}>{date_picker}</EuiFlexItem>
           </EuiFlexGroup>
         </EuiPanel>
       </EuiFlexItem>
@@ -289,22 +332,6 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiPanel>
   )
 
-  const modal_style: CSSProperties = {
-    maxWidth: "90vw",
-    width: "90vw",
-    height: "90vh",
-    maxHeight: "90vh",
-    //This will ensure that the modal displays in the center of the screen
-
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-
-    //Using this over transform: translate(-50%, -50%) because it is not applied straight away
-    marginTop: "-45vh",
-    marginLeft: "-45vw",
-  }
-
   return (
     <EuiModal onClose={on_close} style={modal_style}>
       <EuiModalBody>
@@ -315,6 +342,22 @@ const Single_station_view: FC<Single_station_view_props> = ({
       </EuiModalBody>
     </EuiModal>
   )
+}
+
+const modal_style: CSSProperties = {
+  maxWidth: "89vw",
+  width: "89vw",
+  height: "89vh",
+  maxHeight: "89vh",
+  //This will ensure that the modal displays in the center of the screen
+
+  position: "absolute",
+  top: "49%",
+  left: "49%",
+
+  //Using this over transform: translate(-51%, -50%) because it is not applied straight away
+  marginTop: "-46vh",
+  marginLeft: "-46vw",
 }
 
 export default Single_station_view

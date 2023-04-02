@@ -1,9 +1,10 @@
+import moment from "moment"
 import { Stored_journey_data, Stored_station_data } from "../common"
 
 export const dummy_journey_A: Stored_journey_data = {
   _id: "1",
-  departure_date: "2021-01-01",
-  return_date: "2021-01-02",
+  departure_date: moment("2021-01-01"),
+  return_date: moment("2021-01-02"),
   departure_station_id: "1",
   departure_station_name: "departure_station_A",
   return_station_id: "2",
@@ -14,8 +15,8 @@ export const dummy_journey_A: Stored_journey_data = {
 
 export const dummy_journey_B: Stored_journey_data = {
   _id: "2",
-  departure_date: "2021-01-02",
-  return_date: "2021-01-03",
+  departure_date: moment("2021-01-02"),
+  return_date: moment("2021-01-03"),
   departure_station_id: "3",
   departure_station_name: "departure_station_B",
   return_station_id: "4",

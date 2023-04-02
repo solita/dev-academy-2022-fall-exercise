@@ -9,6 +9,7 @@ import { Request, Response } from "express"
 
 import debug from "debug"
 import Joi from "joi"
+import moment from "moment"
 const debugLog = debug("app:journey_controller:log")
 const errorLog = debug("app:journey_controller:error")
 
@@ -81,8 +82,8 @@ export function read_csv_journey_data(filePath: string): Promise<void> {
         }
         //Translating the data from the csv file to the data format that is easier to use and store in the application.
         const results: Journey_data = {
-          departure_date: record.Departure,
-          return_date: record.Return,
+          departure_date: moment(record.Departure),
+          return_date: moment(record.Return),
           departure_station_id: record["Departure station id"],
           departure_station_name: record["Departure station name"],
           return_station_id: record["Return station id"],

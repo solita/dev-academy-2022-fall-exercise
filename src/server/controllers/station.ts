@@ -15,6 +15,8 @@ import { Request, Response } from "express"
 
 import debug from "debug"
 import Joi from "joi"
+import { PipelineStage } from "mongoose"
+import moment from "moment"
 const debugLog = debug("app:Station_controller:log")
 const errorLog = debug("app:Station_controller:error")
 
@@ -226,11 +228,16 @@ export interface Station_stats {
   top_5_departure_stations: Stored_station_data[]
 }
 
+export interface Get_station_stats_query_params extends Time_filter {}
+
 export const get_station_stats = async (
-  req: Request<{ _id: string }>,
-  res: Response
+  req: Request<{ _id: string }, {}, {}, Get_station_stats_query_params>,
+  res: Response<Station_stats | { message: string }>
 ) => {
   const { _id } = req.params
+  const time_filter = req.query
+  debugLog("time_filter", time_filter)
+
   const station = await Station.findById(_id)
   if (!station || !station.station_id) {
     return res.status(404).json({
@@ -250,7 +257,14 @@ export const get_station_stats = async (
   )
   const average_distance_ended = await get_average_distance_ended(station.station_id)
 
-  const top_5_return_stations = await get_top_5_return_stations(station.station_id)
+  const top_5_return_stations = await get_top_5_return_stations(
+    station.station_id,
+    time_filter
+  )
+
+  debugLog("top_5_return_stations", top_5_return_stations)
+  debugLog("top_5_return_stations", top_5_return_stations[0]?.station_data[0])
+
   const top_5_departure_stations = await get_top_5_departure_stations(
     station.station_id
   )
@@ -271,22 +285,41 @@ export const get_station_stats = async (
   return res.status(200).json(response_data)
 }
 
-export interface top_stations {
+export interface Top_stations {
   _id: string
   count: number
   station_data: Stored_station_data[]
 }
 
+export interface Time_filter {
+  start_date: moment.Moment
+  end_date: moment.Moment
+}
+
 //Top 5 most popular return stations for journeys starting from the station
-export const get_top_5_return_stations = async (station_doc_id: string) => {
+export const get_top_5_return_stations = async (
+  station_doc_id: string,
+  time_filter: Time_filter
+) => {
   debugLog("Getting top 5 return stations for station :", station_doc_id)
-  return Journey.aggregate<top_stations>([
+
+  const time_filter_query: PipelineStage = {
+    $match: {
+      departure_date: {
+        $gte: time_filter.start_date || moment(0),
+        $lte: time_filter.end_date || moment(),
+      },
+    },
+  }
+
+  return Journey.aggregate<Top_stations>([
     {
-      //Find all stations that have the same departure station id as the given station id
+      //Find all journeys that have the same departure station id as the given station id
       $match: {
         departure_station_id: station_doc_id,
       },
     },
+    time_filter_query,
     {
       //Group journeys by their return station id and get a count
       $group: {
@@ -319,7 +352,7 @@ export const get_top_5_return_stations = async (station_doc_id: string) => {
 //Top 5 most popular departure stations for journeys ending at the station
 export const get_top_5_departure_stations = async (station_doc_id: string) => {
   debugLog("Getting top 5 departure stations for station :", station_doc_id)
-  return Journey.aggregate<top_stations>([
+  return Journey.aggregate<Top_stations>([
     {
       $match: {
         return_station_id: station_doc_id,
