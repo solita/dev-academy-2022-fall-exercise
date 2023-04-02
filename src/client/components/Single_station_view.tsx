@@ -20,6 +20,15 @@ import React, { CSSProperties, FC, useEffect, useState } from "react"
 import { Stored_station_data } from "../../../src/common"
 import { Station_stats } from "../../../src/server/controllers/station"
 
+import "leaflet/dist/leaflet.css"
+import "leaflet/dist/images/marker-icon.png"
+import "leaflet/dist/images/marker-shadow.png"
+import "leaflet/dist/images/marker-icon-2x.png"
+import "leaflet/dist/images/layers.png"
+import "leaflet/dist/images/layers-2x.png"
+
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
+
 interface Single_station_view_props {
   station_doc_id: string
   on_close: () => void
@@ -262,13 +271,21 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
-  const station_map_section = (
+  const station_map_section = station && (
     <EuiPanel>
-      <img
-        src="https://tse3.mm.bing.net/th?id=OIP.-sWDGQIVT4rMmi7mHvvCQwAAAA&pid=Api"
-        width="100%"
-        height="100%"
-      ></img>
+      <MapContainer
+        style={{ width: "100%", height: "100%" }}
+        center={[station.y, station.x]}
+        zoom={19}
+      >
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[station.y, station.x]}>
+          <Popup>{station.nimi}</Popup>
+        </Marker>
+      </MapContainer>
     </EuiPanel>
   )
 
