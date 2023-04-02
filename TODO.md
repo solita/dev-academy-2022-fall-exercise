@@ -49,6 +49,7 @@
 * Ability to filter all the calculations per month
 
 ## Extra
+* Redownload and Repackage journey csv data
 * Add credentials to the database
 * CI/CD Automate release to public server
 * ~~Add test suite~~

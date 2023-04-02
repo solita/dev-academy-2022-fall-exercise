@@ -41,17 +41,18 @@ const Single_station_view: FC<Single_station_view_props> = ({
   station_doc_id,
   on_close,
 }) => {
+  const [view_station_id, set_view_station_id] = useState(station_doc_id)
   const [station, set_station] = useState<Stored_station_data>()
   const [station_stats, set_station_stats] = useState<Station_stats>()
 
   //Assuming the dataset only goes back 10 years or less
-  const [start_date, set_start_date] = useState(moment().subtract(10, "years"))
+  const [start_date, set_start_date] = useState(moment().subtract(6, "years"))
   const [end_date, set_end_date] = useState(moment())
 
   const get_station = async () => {
     try {
       const response = await axios.get<Stored_station_data>(
-        `/stations/${station_doc_id}`
+        `/stations/${view_station_id}`
       )
 
       set_station(response.data)
@@ -61,6 +62,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
   }
 
   const get_station_stats = async () => {
+    set_station_stats(undefined)
     try {
       const response = await axios.get<Station_stats>(
         `/stations/${station_doc_id}/stats`,
@@ -84,7 +86,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
   useEffect(() => {
     get_station()
     get_station_stats()
-  }, [])
+  }, [view_station_id])
 
   const convert_distance_to_km = (distance: number) => {
     if (distance < 1000) {
@@ -149,8 +151,16 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
+  const switch_station = (station_doc_id: string) => {
+    set_view_station_id(station_doc_id)
+  }
   const top_return_stations_list = station_stats?.top_5_return_stations.map(
-    (station, index) => <EuiListGroupItem label={`${index + 1}. ${station.nimi}`} />
+    (station, index) => (
+      <EuiListGroupItem
+        onClick={() => switch_station(station._id)}
+        label={`${index + 1}. ${station.nimi}`}
+      />
+    )
   )
   const popular_return_station_chart = (
     <>
@@ -165,7 +175,12 @@ const Single_station_view: FC<Single_station_view_props> = ({
   )
 
   const top_departure_stations_list = station_stats?.top_5_departure_stations.map(
-    (station, index) => <EuiListGroupItem label={`${index + 1}. ${station.nimi}`} />
+    (station, index) => (
+      <EuiListGroupItem
+        onClick={() => switch_station(station._id)}
+        label={`${index + 1}. ${station.nimi}`}
+      />
+    )
   )
   const popular_departure_station_chart = (
     <>
@@ -277,7 +292,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
           selected={start_date}
           onChange={(date) => date && set_start_date(date)}
           startDate={start_date}
-          maxDate={end_date}
+          maxDate={moment()}
           endDate={end_date}
           aria-label="Start date"
         />
@@ -318,7 +333,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
   const station_map_section = station && (
     <EuiPanel>
       <MapContainer
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "50%", height: "50%", marginTop: "50%", marginLeft: "50%" }}
         center={[station.y, station.x]}
         zoom={19}
       >
@@ -338,7 +353,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
       <EuiModalBody>
         <EuiFlexGroup style={{ height: "100%" }}>
           <EuiFlexItem grow={true}>{information_section}</EuiFlexItem>
-          <EuiFlexItem grow={true}>{station_map_section}</EuiFlexItem>
+          <EuiFlexItem grow={false}>{station_map_section}</EuiFlexItem>
         </EuiFlexGroup>
       </EuiModalBody>
     </EuiModal>

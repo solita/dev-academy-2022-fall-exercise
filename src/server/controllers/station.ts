@@ -228,10 +228,10 @@ export interface Station_stats {
   top_5_departure_stations: Stored_station_data[]
 }
 
-export interface Get_station_stats_query_params extends Time_filter {}
+export interface Get_station_stats_query_params extends Partial<Time_filter> {}
 
 export const get_station_stats = async (
-  req: Request<{ _id: string }, {}, {}, Get_station_stats_query_params>,
+  req: Request<{ _id: string }, {}, {}, Time_filter | undefined>,
   res: Response<Station_stats | { message: string }>
 ) => {
   const { _id } = req.params
@@ -245,17 +245,28 @@ export const get_station_stats = async (
     })
   }
 
-  const total_journeys_started = await Journey.countDocuments({
+  const total_journeys_started = await Journey.find({
+    departure_date: {
+      $gte: time_filter?.start_date || new Date(0),
+      $lte: time_filter?.end_date || new Date(),
+    },
+  }).countDocuments({
     departure_station_id: station.station_id,
   })
-  const total_journeys_ended = await Journey.countDocuments({
+  const total_journeys_ended = await Journey.find({
+    departure_date: {
+      $gte: time_filter?.start_date || new Date(0),
+      $lte: time_filter?.end_date || new Date(),
+    },
+  }).countDocuments({
     return_station_id: station.station_id,
   })
 
   const average_distance_started = await get_average_distance_started(
-    station.station_id
+    station.station_id,
+    time_filter
   )
-  const average_distance_ended = await get_average_distance_ended(station.station_id)
+  const average_distance_ended = await get_average_distance_ended(station.station_id, time_filter)
 
   const top_5_return_stations = await get_top_5_return_stations(
     station.station_id,
@@ -263,7 +274,8 @@ export const get_station_stats = async (
   )
 
   const top_5_departure_stations = await get_top_5_departure_stations(
-    station.station_id
+    station.station_id,
+    time_filter
   )
 
   const response_data: Station_stats = {
@@ -296,7 +308,7 @@ export interface Time_filter {
 //Top 5 most popular return stations for journeys starting from the station
 export const get_top_5_return_stations = async (
   station_doc_id: string,
-  time_filter?: Time_filter
+  time_filter: Time_filter | undefined
 ) => {
   debugLog("Getting top 5 return stations for station :", station_doc_id)
   return Journey.aggregate<Top_stations>([
@@ -342,7 +354,7 @@ export const get_top_5_return_stations = async (
 //Top 5 most popular departure stations for journeys ending at the station
 export const get_top_5_departure_stations = async (
   station_doc_id: string,
-  time_filter?: Time_filter
+  time_filter: Time_filter | undefined
 ) => {
   debugLog("Getting top 5 departure stations for station :", station_doc_id)
   return Journey.aggregate<Top_stations>([
@@ -382,7 +394,10 @@ export const get_top_5_departure_stations = async (
 
 //The average distance of a journey starting from the station
 type average_distance = { average_distance: number }
-export const get_average_distance_started = async (station_doc_id: string, time_filter?: Time_filter) => {
+export const get_average_distance_started = async (
+  station_doc_id: string,
+  time_filter: Time_filter | undefined
+) => {
   debugLog("Getting average distance started for station :", station_doc_id)
   return Journey.aggregate<average_distance>([
     {
@@ -404,7 +419,10 @@ export const get_average_distance_started = async (station_doc_id: string, time_
 }
 
 //The average distance of a journey ending at the station
-export const get_average_distance_ended = async (station_doc_id: string, time_filter?: Time_filter) => {
+export const get_average_distance_ended = async (
+  station_doc_id: string,
+  time_filter: Time_filter | undefined
+) => {
   debugLog("Getting average distance ended for station :", station_doc_id)
   return Journey.aggregate<average_distance>([
     {
