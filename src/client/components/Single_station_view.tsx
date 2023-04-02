@@ -5,6 +5,7 @@ import {
   EuiIcon,
   EuiListGroup,
   EuiListGroupItem,
+  EuiLoadingSpinner,
   EuiModal,
   EuiModalBody,
   EuiPanel,
@@ -76,7 +77,12 @@ const Single_station_view: FC<Single_station_view_props> = ({
           [
             {
               color: "#6ECCB1",
-              icon: () => <EuiIcon type="arrowRight" />,
+              icon: () =>
+                station_stats ? (
+                  <EuiIcon type="arrowRight" />
+                ) : (
+                  <EuiLoadingSpinner size="s" />
+                ),
               title: "Journeys started at this station",
               value: station_stats?.average_distance_started ?? 0,
               valueFormatter: convert_distance_to_km,
@@ -85,7 +91,12 @@ const Single_station_view: FC<Single_station_view_props> = ({
           [
             {
               color: "#6ECCB1",
-              icon: () => <EuiIcon type="arrowLeft" />,
+              icon: () =>
+                station_stats ? (
+                  <EuiIcon type="arrowLeft" />
+                ) : (
+                  <EuiLoadingSpinner size="s" />
+                ),
               title: "Journeys ended at this station",
               value: station_stats?.average_distance_ended ?? 0,
               valueFormatter: convert_distance_to_km,
@@ -100,7 +111,9 @@ const Single_station_view: FC<Single_station_view_props> = ({
     <EuiFlexGroup direction="column">
       <EuiFlexItem grow={false}>
         <EuiPanel>
-          <EuiText>Average Covered Distance</EuiText>
+          <EuiTitle size="m">
+            <h2>Average Covered Distance</h2>
+          </EuiTitle>
         </EuiPanel>
       </EuiFlexItem>
 
@@ -110,30 +123,32 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
+  const top_return_stations_list = station_stats?.top_5_return_stations.map(
+    (station, index) => <EuiListGroupItem label={`${index + 1}. ${station.nimi}`} />
+  )
   const popular_return_station_chart = (
     <>
       <EuiTitle size="s">
-        <h2>Staring from here</h2>
+        <h2>Return stations</h2>
       </EuiTitle>
       <EuiSpacer size="s" />
       <EuiListGroup flush={true} bordered={true}>
-        {station_stats?.top_5_return_stations.map((station, index) => (
-          <EuiListGroupItem label={`${index + 1}. ${station.nimi}`} />
-        ))}
+        {station_stats ? top_return_stations_list : <EuiSkeletonText lines={5} />}
       </EuiListGroup>
     </>
   )
 
+  const top_departure_stations_list = station_stats?.top_5_departure_stations.map(
+    (station, index) => <EuiListGroupItem label={`${index + 1}. ${station.nimi}`} />
+  )
   const popular_departure_station_chart = (
     <>
       <EuiTitle size="s">
-        <h2>Ending from here</h2>
+        <h2>Departing stations</h2>
       </EuiTitle>
       <EuiSpacer size="s" />
       <EuiListGroup flush={true} bordered={true} title="Ending from here">
-        {station_stats?.top_5_departure_stations.map((station, index) => (
-          <EuiListGroupItem label={`${index + 1}. ${station.nimi}`} />
-        ))}
+        {station_stats ? top_departure_stations_list : <EuiSkeletonText lines={5} />}
       </EuiListGroup>
     </>
   )
@@ -142,7 +157,9 @@ const Single_station_view: FC<Single_station_view_props> = ({
     <EuiFlexGroup direction="column">
       <EuiFlexItem grow={false}>
         <EuiPanel>
-          <EuiText>Top Popular stations</EuiText>
+          <EuiTitle>
+            <h2>Top Popular stations</h2>
+          </EuiTitle>
         </EuiPanel>
       </EuiFlexItem>
 
@@ -168,22 +185,27 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
-  const station_name = station?.nimi ?? <EuiSkeletonTitle />
-  const station_address = station?.osoite ?? <EuiSkeletonText lines={1} />
+  const station_name = station ? (
+    <EuiTitle size="l">
+      <h2>{station.nimi}</h2>
+    </EuiTitle>
+  ) : (
+    <EuiSkeletonTitle />
+  )
+  const station_address = station ? (
+    <EuiText size="m">{station?.osoite}</EuiText>
+  ) : (
+    <EuiSkeletonText lines={1} />
+  )
   const title_and_address = (
     <>
-      <EuiTitle size="l">
-        <EuiText>{station_name}</EuiText>
-      </EuiTitle>
-
+      {station_name}
       <EuiTitle size="s">
-        <EuiFlexGroup direction="row" gutterSize="xs" alignItems="baseline">
+        <EuiFlexGroup direction="row" gutterSize="xs">
           <EuiFlexItem grow={false}>
             <EuiIcon type="visMapCoordinate" />
           </EuiFlexItem>
-          <EuiFlexItem grow={true}>
-            <EuiText size="m">{station_address}</EuiText>
-          </EuiFlexItem>
+          <EuiFlexItem grow={true}>{station_address}</EuiFlexItem>
         </EuiFlexGroup>
       </EuiTitle>
     </>
@@ -225,8 +247,10 @@ const Single_station_view: FC<Single_station_view_props> = ({
     <EuiFlexGroup direction="column" style={{ height: "100%" }}>
       <EuiFlexItem grow={false}>
         <EuiPanel>
-          <EuiFlexGroup direction="row">
-            <EuiFlexItem grow={false}>{title_and_address}</EuiFlexItem>
+          <EuiFlexGroup direction="row" alignItems="baseline">
+            <EuiFlexItem style={{ minWidth: "30%" }} grow={false}>
+              {title_and_address}
+            </EuiFlexItem>
             <EuiFlexItem grow={true}>{station_total_stats}</EuiFlexItem>
           </EuiFlexGroup>
         </EuiPanel>
@@ -250,14 +274,18 @@ const Single_station_view: FC<Single_station_view_props> = ({
 
   const modal_style: CSSProperties = {
     maxWidth: "90vw",
-    width: "89vw",
-    height: "89vh",
+    width: "90vw",
+    height: "90vh",
     maxHeight: "90vh",
     //This will ensure that the modal displays in the center of the screen
-    position: "fixed",
+
+    position: "absolute",
     top: "50%",
     left: "50%",
-    transform: "translate(-50%, -50%)",
+
+    //Using this over transform: translate(-50%, -50%) because it is not applied straight away
+    marginTop: "-45vh",
+    marginLeft: "-45vw",
   }
 
   return (
