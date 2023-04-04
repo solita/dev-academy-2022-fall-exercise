@@ -1,18 +1,24 @@
 import { EuiRangeProps, EuiRange, EuiRangeTick } from "@elastic/eui"
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import use_debounce_handler from "../../../hooks/use_debounce_handler"
 import React from "react"
+import axios from "axios"
 
 interface Time_filter_props {
   set_date_filter: (month: string) => void
 }
 
+/**
+ * Component that allows the user to filter the data by month
+ *
+ * @param set_date_filter method that is called when the user selects a month, 
+ * it is debounce to prevent too many requests
+ * @returns
+ */
 const Time_filter: FC<Time_filter_props> = ({ set_date_filter }) => {
   const debounce_handler = use_debounce_handler(set_date_filter, 500)
 
-  //Alternative date picker where you can select the month and year
   const [month_value, set_month_value] = useState("0")
-  const [year_value, set_year_value] = useState("0")
 
   const on_month_select_handler: EuiRangeProps["onChange"] = (e) => {
     set_month_value(e.currentTarget.value)
@@ -47,7 +53,7 @@ const Time_filter: FC<Time_filter_props> = ({ set_date_filter }) => {
       showInput={false}
       value={month_value}
       onChange={on_month_select_handler}
-      aria-label="Time filter"
+      aria-label="Time month filter"
     />
   )
 }

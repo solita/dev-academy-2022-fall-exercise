@@ -1,13 +1,8 @@
 import {
-  EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiModal,
   EuiModalBody,
-  EuiPanel,
-  EuiPopover,
-  EuiRange,
-  EuiRangeProps,
   EuiTitle,
 } from "@elastic/eui"
 import axios from "axios"
@@ -22,8 +17,7 @@ import Title_and_address from "./components/Title_and_address"
 import Station_map from "./components/Station_map"
 import Popular_returns from "./components/Popular_returns"
 import Popular_departures from "./components/Popular_departures"
-import _ from "lodash"
-import use_debounce_handler from "../../hooks/use_debounce_handler"
+import _, { set } from "lodash"
 import Time_filter from "./components/Time_filter"
 
 interface Single_station_view_props {
@@ -39,9 +33,12 @@ const Single_station_view: FC<Single_station_view_props> = ({
   const [station, set_station] = useState<Stored_station_data>()
   const [station_stats, set_station_stats] = useState<Station_stats>()
 
-  //Assuming the dataset only goes back 10 years or less
-  const [start_date, set_start_date] = useState(moment().subtract(3, "years"))
-  const end_date = moment()
+  //The year will be hardcoded for 2021 for now
+  const default_start_date = moment().year(2021).startOf("year")
+  const default_end_date = moment().year(2021).endOf("year")
+
+  const [start_date, set_start_date] = useState(default_start_date)
+  const [end_date, set_end_date] = useState(default_end_date)
 
   const get_station = async () => {
     try {
@@ -132,19 +129,6 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
-  const set_date_filter = (month: string) => {
-    if (month === "0") {
-      set_start_date(moment().subtract(3, "years"))
-    } else {
-      //set the start date to the first day of the selected month and year
-      set_start_date(moment(`2021-${month}-01`, "YYYY-MM-DD"))
-    }
-  }
-
-  useEffect(() => {
-    get_station_stats()
-  }, [start_date])
-
   const modal_header = (
     <EuiFlexGroup direction="row" alignItems="baseline">
       <EuiFlexItem style={{ minWidth: "30%" }} grow={false}>
@@ -157,6 +141,23 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
+  const set_date_filter = (month: string) => {
+    if (month === "0") {
+      //Reset to looking at the whole year
+      set_start_date(default_start_date)
+      set_end_date(default_end_date)
+    } else {
+      //set the start date to the first day of the selected month and year
+      //set the end date to the last day of the selected month and year
+      set_start_date(moment(`2021-${month}-01`, "YYYY-MM-DD"))
+      set_end_date(moment(`2021-${month}-01`, "YYYY-MM-DD").endOf("month"))
+    }
+  }
+
+  useEffect(() => {
+    get_station_stats()
+  }, [start_date])
+  
   const information_section = (
     <EuiFlexGroup direction="column" style={{ height: "100%" }}>
       <EuiFlexItem grow={false}>{modal_header}</EuiFlexItem>
