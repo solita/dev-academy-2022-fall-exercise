@@ -18,7 +18,7 @@ import {
   Get_stations_query_params,
   Station_query_result,
 } from "../../server/controllers/station"
-import Single_station_view from "./Single_station_view"
+import Single_station_view from "./single_station_view/Single_station_view"
 
 const Station_view = () => {
   const [is_loading, set_is_loading] = useState(false)

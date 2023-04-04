@@ -19,8 +19,8 @@ import {
 } from "@elastic/eui"
 import axios from "axios"
 import React, { CSSProperties, FC, useEffect, useState } from "react"
-import { Stored_station_data } from "../../../src/common"
-import { Station_stats } from "../../../src/server/controllers/station"
+import { Stored_station_data } from "../../../common"
+import { Station_stats } from "../../../server/controllers/station"
 
 import "leaflet/dist/leaflet.css"
 import "leaflet/dist/images/marker-icon.png"
@@ -31,6 +31,7 @@ import "leaflet/dist/images/layers-2x.png"
 
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
 import moment from "moment"
+import Distance_chart from "./components/Distance_chart"
 
 interface Single_station_view_props {
   station_doc_id: string
@@ -88,53 +89,6 @@ const Single_station_view: FC<Single_station_view_props> = ({
     get_station_stats()
   }, [view_station_id])
 
-  const convert_distance_to_km = (distance: number) => {
-    if (distance < 1000) {
-      return `${distance} m`
-    } else {
-      return `${(distance / 1000).toFixed(2)} km`
-    }
-  }
-
-  //TODO Add trend data into chart
-  const distance_chart = (
-    <Chart>
-      <Metric
-        id="metricId"
-        data={[
-          [
-            {
-              color: "#6ECCB1",
-              icon: () =>
-                station_stats ? (
-                  <EuiIcon type="arrowRight" />
-                ) : (
-                  <EuiLoadingSpinner size="s" />
-                ),
-              title: "Journeys started at this station",
-              value: station_stats?.average_distance_started ?? 0,
-              valueFormatter: convert_distance_to_km,
-            },
-          ],
-          [
-            {
-              color: "#6ECCB1",
-              icon: () =>
-                station_stats ? (
-                  <EuiIcon type="arrowLeft" />
-                ) : (
-                  <EuiLoadingSpinner size="s" />
-                ),
-              title: "Journeys ended at this station",
-              value: station_stats?.average_distance_ended ?? 0,
-              valueFormatter: convert_distance_to_km,
-            },
-          ],
-        ]}
-      />
-    </Chart>
-  )
-
   const distance_stat_column = (
     <EuiFlexGroup direction="column">
       <EuiFlexItem grow={false}>
@@ -146,7 +100,9 @@ const Single_station_view: FC<Single_station_view_props> = ({
       </EuiFlexItem>
 
       <EuiFlexItem grow={true}>
-        <EuiPanel>{distance_chart}</EuiPanel>
+        <EuiPanel>
+          <Distance_chart station_stats={station_stats} />
+        </EuiPanel>
       </EuiFlexItem>
     </EuiFlexGroup>
   )
