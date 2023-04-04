@@ -22,16 +22,11 @@ import React, { CSSProperties, FC, useEffect, useState } from "react"
 import { Stored_station_data } from "../../../common"
 import { Station_stats } from "../../../server/controllers/station"
 
-import "leaflet/dist/leaflet.css"
-import "leaflet/dist/images/marker-icon.png"
-import "leaflet/dist/images/marker-shadow.png"
-import "leaflet/dist/images/marker-icon-2x.png"
-import "leaflet/dist/images/layers.png"
-import "leaflet/dist/images/layers-2x.png"
-
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
 import moment from "moment"
 import Distance_chart from "./components/Distance_chart"
+import Station_total_stats from "./components/Station_total_stats"
+import Title_and_address from "./components/Title_and_address"
+import Station_map from "./components/Station_map"
 
 interface Single_station_view_props {
   station_doc_id: string
@@ -182,64 +177,6 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
-  const station_name = station ? (
-    <EuiTitle size="l">
-      <h2>{station.nimi}</h2>
-    </EuiTitle>
-  ) : (
-    <EuiSkeletonTitle />
-  )
-  const station_address = station ? (
-    <EuiText size="m">{station?.osoite}</EuiText>
-  ) : (
-    <EuiSkeletonText lines={1} />
-  )
-  const title_and_address = (
-    <>
-      {station_name}
-      <EuiTitle size="s">
-        <EuiFlexGroup direction="row" gutterSize="xs">
-          <EuiFlexItem grow={false}>
-            <EuiIcon type="visMapCoordinate" />
-          </EuiFlexItem>
-          <EuiFlexItem grow={true}>{station_address}</EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiTitle>
-    </>
-  )
-
-  const journeys_started_display = station_stats ? (
-    <EuiText size="s">{station_stats.total_journeys_started}</EuiText>
-  ) : (
-    <EuiSkeletonText lines={1} />
-  )
-
-  const journeys_ended_display = station_stats ? (
-    <EuiText size="s">{station_stats.total_journeys_ended}</EuiText>
-  ) : (
-    <EuiSkeletonText lines={1} />
-  )
-
-  const station_total_stats = (
-    <EuiTitle>
-      <>
-        <EuiFlexGroup gutterSize="s" direction="row">
-          <EuiFlexItem grow={false}>
-            <EuiText size="s">Journeys started:</EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={true}>{journeys_started_display}</EuiFlexItem>
-        </EuiFlexGroup>
-
-        <EuiFlexGroup gutterSize="s" direction="row">
-          <EuiFlexItem grow={false}>
-            <EuiText size="s">Journeys ended:</EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={true}>{journeys_ended_display}</EuiFlexItem>
-        </EuiFlexGroup>
-      </>
-    </EuiTitle>
-  )
-
   const date_picker = (
     <EuiDatePickerRange
       isInvalid={start_date > end_date}
@@ -272,9 +209,11 @@ const Single_station_view: FC<Single_station_view_props> = ({
         <EuiPanel>
           <EuiFlexGroup direction="row" alignItems="baseline">
             <EuiFlexItem style={{ minWidth: "30%" }} grow={false}>
-              {title_and_address}
+              <Title_and_address station={station} />
             </EuiFlexItem>
-            <EuiFlexItem grow={true}>{station_total_stats}</EuiFlexItem>
+            <EuiFlexItem grow={true}>
+              <Station_total_stats station_stats={station_stats} />
+            </EuiFlexItem>
             <EuiFlexItem grow={false}>{date_picker}</EuiFlexItem>
           </EuiFlexGroup>
         </EuiPanel>
@@ -286,30 +225,14 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
-  const station_map_section = station && (
-    <EuiPanel>
-      <MapContainer
-        style={{ width: "50%", height: "50%", marginTop: "50%", marginLeft: "50%" }}
-        center={[station.y, station.x]}
-        zoom={19}
-      >
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={[station.y, station.x]}>
-          <Popup>{station.nimi}</Popup>
-        </Marker>
-      </MapContainer>
-    </EuiPanel>
-  )
-
   return (
     <EuiModal onClose={on_close} style={modal_style}>
       <EuiModalBody>
         <EuiFlexGroup style={{ height: "100%" }}>
           <EuiFlexItem grow={true}>{information_section}</EuiFlexItem>
-          <EuiFlexItem grow={false}>{station_map_section}</EuiFlexItem>
+          <EuiFlexItem grow={true} style={{ width: "25%"}}>
+            <Station_map station={station} />
+          </EuiFlexItem>
         </EuiFlexGroup>
       </EuiModalBody>
     </EuiModal>
