@@ -236,7 +236,6 @@ export const get_station_stats = async (
 ) => {
   const { _id } = req.params
   const time_filter = req.query
-  debugLog("time_filter", time_filter)
 
   const station = await Station.findById(_id)
   if (!station || !station.station_id) {

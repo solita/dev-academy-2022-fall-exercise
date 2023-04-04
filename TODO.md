@@ -46,20 +46,22 @@
 * ~~The average distance of a journey ending at the station~~
 * ~~Top 5 most popular return stations for journeys starting from the station~~
 * ~~Top 5 most popular departure stations for journeys ending at the station~~
-* Ability to filter all the calculations per month
+* ~~Ability to filter all the calculations per month~~
 
 ## Extra
-* Redownload and Repackage journey csv data
-* Add credentials to the database
-* CI/CD Automate release to public server
 * ~~Add test suite~~
-* Set config collection to have a boolean check for both csv data types
-* Document process of each section.
 * Endpoints to store new journeys data or new bicycle stations
 * ~~Running backend in Docker~~
 * Running backend in Cloud
 * Implement E2E tests
 * Create UI for adding journeys or bicycle stations
+
+## TODO
+* Redownload and Repackage journey csv data
+* Add credentials to the database
+* CI/CD Automate release to public server
+* Set config collection to have a boolean check for both csv data types
+* Document process of each section.
 
 ## Bugs
 * App does not wait until all items are added to the database before setting csv_data_is_loaded to true

@@ -1,6 +1,6 @@
 name: Test runner
 run-name: Running tests and uploading coverage to codecov
-on: [push, pull_request]
+on: [pull_request]
 jobs:
   run-tests:
     runs-on: ubuntu-latest

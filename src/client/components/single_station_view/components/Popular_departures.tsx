@@ -20,6 +20,9 @@ const Popular_departures: FC<Popular_departures_props> = ({
   const top_departure_stations_list = station_stats?.top_5_departure_stations.map(
     (station, index) => (
       <EuiListGroupItem
+        key={station._id}
+        //Adding colour to make the item look more clickable
+        color="primary"
         onClick={() => switch_station(station._id)}
         label={`${index + 1}. ${station.nimi}`}
       />

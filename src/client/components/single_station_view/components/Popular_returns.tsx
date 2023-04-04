@@ -22,6 +22,8 @@ const Popular_returns: FC<Popular_returns_props> = ({
   const top_return_stations_list = station_stats?.top_5_return_stations.map(
     (station, index) => (
       <EuiListGroupItem
+        key={station._id}
+        color="primary"
         onClick={() => switch_station(station._id)}
         label={`${index + 1}. ${station.nimi}`}
       />
