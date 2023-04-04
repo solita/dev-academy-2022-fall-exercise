@@ -1,20 +1,13 @@
-import { Chart, Metric } from "@elastic/charts"
 import {
-  EuiDatePicker,
-  EuiDatePickerRange,
+  EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiIcon,
-  EuiListGroup,
-  EuiListGroupItem,
-  EuiLoadingSpinner,
   EuiModal,
   EuiModalBody,
   EuiPanel,
-  EuiSkeletonText,
-  EuiSkeletonTitle,
-  EuiSpacer,
-  EuiText,
+  EuiPopover,
+  EuiRange,
+  EuiRangeProps,
   EuiTitle,
 } from "@elastic/eui"
 import axios from "axios"
@@ -29,6 +22,9 @@ import Title_and_address from "./components/Title_and_address"
 import Station_map from "./components/Station_map"
 import Popular_returns from "./components/Popular_returns"
 import Popular_departures from "./components/Popular_departures"
+import _ from "lodash"
+import use_debounce_handler from "../../hooks/use_debounce_handler"
+import Time_filter from "./components/Time_filter"
 
 interface Single_station_view_props {
   station_doc_id: string
@@ -44,8 +40,8 @@ const Single_station_view: FC<Single_station_view_props> = ({
   const [station_stats, set_station_stats] = useState<Station_stats>()
 
   //Assuming the dataset only goes back 10 years or less
-  const [start_date, set_start_date] = useState(moment().subtract(6, "years"))
-  const [end_date, set_end_date] = useState(moment())
+  const [start_date, set_start_date] = useState(moment().subtract(3, "years"))
+  const end_date = moment()
 
   const get_station = async () => {
     try {
@@ -78,10 +74,6 @@ const Single_station_view: FC<Single_station_view_props> = ({
   }
 
   useEffect(() => {
-    get_station_stats()
-  }, [start_date, end_date])
-
-  useEffect(() => {
     get_station()
     get_station_stats()
   }, [view_station_id])
@@ -89,17 +81,13 @@ const Single_station_view: FC<Single_station_view_props> = ({
   const distance_stat_column = (
     <EuiFlexGroup direction="column">
       <EuiFlexItem grow={false}>
-        <EuiPanel>
-          <EuiTitle size="m">
-            <h2>Average Covered Distance</h2>
-          </EuiTitle>
-        </EuiPanel>
+        <EuiTitle size="m">
+          <h2>Average Covered Distance</h2>
+        </EuiTitle>
       </EuiFlexItem>
 
       <EuiFlexItem grow={true}>
-        <EuiPanel>
-          <Distance_chart station_stats={station_stats} />
-        </EuiPanel>
+        <Distance_chart station_stats={station_stats} />
       </EuiFlexItem>
     </EuiFlexGroup>
   )
@@ -111,11 +99,9 @@ const Single_station_view: FC<Single_station_view_props> = ({
   const popular_stat_column = (
     <EuiFlexGroup direction="column">
       <EuiFlexItem grow={false}>
-        <EuiPanel>
-          <EuiTitle>
-            <h2>Top Popular stations</h2>
-          </EuiTitle>
-        </EuiPanel>
+        <EuiTitle>
+          <h2>Top Popular stations</h2>
+        </EuiTitle>
       </EuiFlexItem>
 
       <EuiFlexItem grow={true}>
@@ -126,12 +112,10 @@ const Single_station_view: FC<Single_station_view_props> = ({
       </EuiFlexItem>
 
       <EuiFlexItem grow={true}>
-        <EuiPanel>
-          <Popular_departures
-            station_stats={station_stats}
-            switch_station={switch_station}
-          />
-        </EuiPanel>
+        <Popular_departures
+          station_stats={station_stats}
+          switch_station={switch_station}
+        />
       </EuiFlexItem>
     </EuiFlexGroup>
   )
@@ -148,53 +132,40 @@ const Single_station_view: FC<Single_station_view_props> = ({
     </EuiFlexGroup>
   )
 
-  const date_picker = (
-    <EuiDatePickerRange
-      isInvalid={start_date > end_date}
-      startDateControl={
-        <EuiDatePicker
-          selected={start_date}
-          onChange={(date) => date && set_start_date(date)}
-          startDate={start_date}
-          maxDate={moment()}
-          endDate={end_date}
-          aria-label="Start date"
-        />
-      }
-      endDateControl={
-        <EuiDatePicker
-          selected={end_date}
-          onChange={(date) => date && set_end_date(date)}
-          startDate={start_date}
-          maxDate={moment()}
-          endDate={end_date}
-          aria-label="End date"
-        />
-      }
-    />
+  const set_date_filter = (month: string) => {
+    if (month === "0") {
+      set_start_date(moment().subtract(3, "years"))
+    } else {
+      //set the start date to the first day of the selected month and year
+      set_start_date(moment(`2021-${month}-01`, "YYYY-MM-DD"))
+    }
+  }
+
+  useEffect(() => {
+    get_station_stats()
+  }, [start_date])
+
+  const modal_header = (
+    <EuiFlexGroup direction="row" alignItems="baseline">
+      <EuiFlexItem style={{ minWidth: "30%" }} grow={false}>
+        <Title_and_address station={station} />
+      </EuiFlexItem>
+
+      <EuiFlexItem grow={true}>
+        <Station_total_stats station_stats={station_stats} />
+      </EuiFlexItem>
+    </EuiFlexGroup>
   )
 
   const information_section = (
     <EuiFlexGroup direction="column" style={{ height: "100%" }}>
-      <EuiFlexItem grow={false}>
-        <EuiPanel>
-          <EuiFlexGroup direction="row" alignItems="baseline">
-            <EuiFlexItem style={{ minWidth: "30%" }} grow={false}>
-              <Title_and_address station={station} />
-            </EuiFlexItem>
+      <EuiFlexItem grow={false}>{modal_header}</EuiFlexItem>
 
-            <EuiFlexItem grow={true}>
-              <Station_total_stats station_stats={station_stats} />
-            </EuiFlexItem>
-
-            <EuiFlexItem grow={false}>{date_picker}</EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiPanel>
+      <EuiFlexItem grow={false} style={{ width: "100%" }}>
+        <Time_filter set_date_filter={set_date_filter} />
       </EuiFlexItem>
 
-      <EuiFlexItem grow={true}>
-        <EuiPanel>{graph_columns}</EuiPanel>
-      </EuiFlexItem>
+      <EuiFlexItem grow={true}>{graph_columns}</EuiFlexItem>
     </EuiFlexGroup>
   )
 

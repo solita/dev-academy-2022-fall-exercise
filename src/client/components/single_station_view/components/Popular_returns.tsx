@@ -29,7 +29,7 @@ const Popular_returns: FC<Popular_returns_props> = ({
   )
 
   return (
-    <EuiPanel>
+    <>
       <EuiTitle size="s">
         <h2>Return stations</h2>
       </EuiTitle>
@@ -37,7 +37,7 @@ const Popular_returns: FC<Popular_returns_props> = ({
       <EuiListGroup flush={true} bordered={true}>
         {station_stats ? top_return_stations_list : <EuiSkeletonText lines={5} />}
       </EuiListGroup>
-    </EuiPanel>
+    </>
   )
 }
 
