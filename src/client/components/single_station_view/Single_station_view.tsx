@@ -27,6 +27,8 @@ import Distance_chart from "./components/Distance_chart"
 import Station_total_stats from "./components/Station_total_stats"
 import Title_and_address from "./components/Title_and_address"
 import Station_map from "./components/Station_map"
+import Popular_returns from "./components/Popular_returns"
+import Popular_departures from "./components/Popular_departures"
 
 interface Single_station_view_props {
   station_doc_id: string
@@ -105,45 +107,6 @@ const Single_station_view: FC<Single_station_view_props> = ({
   const switch_station = (station_doc_id: string) => {
     set_view_station_id(station_doc_id)
   }
-  const top_return_stations_list = station_stats?.top_5_return_stations.map(
-    (station, index) => (
-      <EuiListGroupItem
-        onClick={() => switch_station(station._id)}
-        label={`${index + 1}. ${station.nimi}`}
-      />
-    )
-  )
-  const popular_return_station_chart = (
-    <>
-      <EuiTitle size="s">
-        <h2>Return stations</h2>
-      </EuiTitle>
-      <EuiSpacer size="s" />
-      <EuiListGroup flush={true} bordered={true}>
-        {station_stats ? top_return_stations_list : <EuiSkeletonText lines={5} />}
-      </EuiListGroup>
-    </>
-  )
-
-  const top_departure_stations_list = station_stats?.top_5_departure_stations.map(
-    (station, index) => (
-      <EuiListGroupItem
-        onClick={() => switch_station(station._id)}
-        label={`${index + 1}. ${station.nimi}`}
-      />
-    )
-  )
-  const popular_departure_station_chart = (
-    <>
-      <EuiTitle size="s">
-        <h2>Departing stations</h2>
-      </EuiTitle>
-      <EuiSpacer size="s" />
-      <EuiListGroup flush={true} bordered={true} title="Ending from here">
-        {station_stats ? top_departure_stations_list : <EuiSkeletonText lines={5} />}
-      </EuiListGroup>
-    </>
-  )
 
   const popular_stat_column = (
     <EuiFlexGroup direction="column">
@@ -156,11 +119,19 @@ const Single_station_view: FC<Single_station_view_props> = ({
       </EuiFlexItem>
 
       <EuiFlexItem grow={true}>
-        <EuiPanel>{popular_return_station_chart}</EuiPanel>
+        <Popular_returns
+          station_stats={station_stats}
+          switch_station={switch_station}
+        />
       </EuiFlexItem>
 
       <EuiFlexItem grow={true}>
-        <EuiPanel>{popular_departure_station_chart}</EuiPanel>
+        <EuiPanel>
+          <Popular_departures
+            station_stats={station_stats}
+            switch_station={switch_station}
+          />
+        </EuiPanel>
       </EuiFlexItem>
     </EuiFlexGroup>
   )
@@ -211,9 +182,11 @@ const Single_station_view: FC<Single_station_view_props> = ({
             <EuiFlexItem style={{ minWidth: "30%" }} grow={false}>
               <Title_and_address station={station} />
             </EuiFlexItem>
+
             <EuiFlexItem grow={true}>
               <Station_total_stats station_stats={station_stats} />
             </EuiFlexItem>
+
             <EuiFlexItem grow={false}>{date_picker}</EuiFlexItem>
           </EuiFlexGroup>
         </EuiPanel>
@@ -230,7 +203,7 @@ const Single_station_view: FC<Single_station_view_props> = ({
       <EuiModalBody>
         <EuiFlexGroup style={{ height: "100%" }}>
           <EuiFlexItem grow={true}>{information_section}</EuiFlexItem>
-          <EuiFlexItem grow={true} style={{ width: "25%"}}>
+          <EuiFlexItem grow={true} style={{ width: "25%" }}>
             <Station_map station={station} />
           </EuiFlexItem>
         </EuiFlexGroup>
